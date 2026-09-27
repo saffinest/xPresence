@@ -1,0 +1,475 @@
+
+<script id="engine">
+/*ENGINE*/
+</script>
+<script>
+const D = /*DATA*/;
+const BT = /*BACKTEST*/;
+const SNAP = /*SNAP*/;
+const SNAP_PREV = /*SNAPPREV*/; // Sep 26 10-day baseline, kept for the Worlds comparison
+const INIT = /*INIT*/;
+const PATCH = /*PATCH*/;
+const MSI = /*MSI*/;
+const ROLL = /*ROLL*/;
+const PADJ = /*PADJ*/;
+const CAL = /*CAL*/;
+const ROLES = /*ROLES*/;
+const ROLEX = /*ROLEX*/;
+(function(){
+  const P = prepGames(D);
+  const name = c => D.C[c];
+  const pct = (x, d=1) => (x*100).toFixed(d);
+  const $ = id => document.getElementById(id);
+  const DEF = { lgs:[0,1,2,3,4,5], st:'all', pt:'all', half:5, pmult:1, tab:'rankings', sort:'take', dir:-1, heatSort:'all', role:'all',
+    lab:{ useDepth:false, useShrink:true, useTeam:false, useRecency:true, usePressure:true, topN:20, k:10, sort:'mix', dir:-1 } };
+  const state = JSON.parse(JSON.stringify(DEF));
+  try { const s = JSON.parse(localStorage.getItem('fdp-state5')||'null'); if (s && Array.isArray(s.lgs)) { Object.assign(state, s); state.lab = { ...DEF.lab, ...(s.lab||{}) }; } } catch(e) {}
+  const TABS = ['rankings','leagues','fearless','evidence','about'];
+  const hashTab = (location.hash||'').replace('#','');
+  if (TABS.includes(hashTab)) state.tab = hashTab; else if (hashTab==='method') state.tab = 'evidence';
+  if (!TABS.includes(state.tab)) state.tab = state.tab==='method' ? 'evidence' : 'rankings';
+  const save = () => { try { localStorage.setItem('fdp-state5', JSON.stringify(state)); } catch(e) {} };
+  const ui = { q:'', all:false, labAll:false, open:new Set() };
+  const filt = () => ({ lgs:new Set(state.lgs), st:state.st, pt:state.pt });
+  // patch-notes adjustment: champion index -> strength multiplier (×1.25 per buff, ÷1.25 per nerf)
+  const nmz = s => s.toLowerCase().replace(/[^a-z]/g,'');
+  const cIdx = new Map(D.C.map((c,i)=>[nmz(c),i]));
+  const ADJ = {}, ADJ_NOTES = {};
+  PATCH.changes.forEach(([n,p,d,z]) => { const i = cIdx.get(nmz(n)); if (i===undefined) return; const sgn = d==='buff'?1:d==='nerf'?-1:0; ADJ[i] = (ADJ[i]||1)*Math.pow(PATCH.factor, sgn); (ADJ_NOTES[i] = ADJ_NOTES[i]||[]).push(`${p}: ${d} (${z})`); });
+
+  // roles played this summer (Oracle's Elixir): champion index -> share per role
+  const RL = ['Top','Jungle','Mid','Bot','Support'];
+  const RSH = {}; D.C.forEach((c,i) => { const v = ROLES.counts[c]; if (!v) return; const n = v.reduce((a,b)=>a+b,0); if (n) RSH[i] = { sh:v.map(x=>x/n), n, main:v.indexOf(Math.max(...v)) }; });
+  const roleLabel = c => { const r = RSH[c]; if (!r) return '–'; const o = r.sh.map((s,i)=>[s,i]).sort((a,b)=>b[0]-a[0]); return o[1][0] >= 0.15 ? `${RL[o[0][1]]} <span class="muted">/ ${RL[o[1][1]]}</span>` : RL[o[0][1]]; };
+  const roleText = c => { const r = RSH[c]; if (!r) return 'No picks this summer'; return r.sh.map((s,i)=>[s,i]).filter(x=>x[0]>=0.02).sort((a,b)=>b[0]-a[0]).map(([s,i])=>`${RL[i]} ${Math.round(s*100)}%`).join(' · ') + ` (${r.n} picks)`; };
+  if (state.role !== 'all' && !(state.role >= 0 && state.role <= 4)) state.role = 'all';
+  $('seg-role').innerHTML = `<button data-v="all">All</button>` + RL.map((r,i)=>`<button data-v="${i}">${r}</button>`).join('');
+
+  // ---------- controls ----------
+  $('seg-lg').innerHTML = D.LG.map((n,i)=>`<button data-v="${i}">${n}</button>`).join('');
+  const ptOrder = D.PT.map((p,i)=>[p,i]).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true}));
+  const LATEST = ptOrder[ptOrder.length-1];
+  if (state.pt !== 'all' && state.pt !== LATEST[1]) state.pt = 'all';
+  $('seg-pt').innerHTML = `<button data-v="all">All patches</button><button data-v="${LATEST[1]}">Latest only (${LATEST[0]})</button>`;
+  { const md = Math.max(...P.games.map(g=>g.day)), dt = new Date(Date.UTC(2026,6,1+md));
+    const mo = dt.toLocaleString('en-US',{month:'short',timeZone:'UTC'});
+    $('dataline').textContent = `Data through ${mo} ${dt.getUTCDate()} · Oracle's Elixir · patches ${ptOrder[0][0]}–${LATEST[0]} · adjusted for ${PATCH.patches.join('–')}`; }
+  function syncControls(){
+    document.querySelectorAll('#seg-lg button').forEach(b=>b.setAttribute('aria-pressed', state.lgs.includes(+b.dataset.v)));
+    document.querySelectorAll('#seg-st button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===String(state.st)));
+    document.querySelectorAll('#seg-pt button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===String(state.pt)));
+    document.querySelectorAll('#seg-role button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===String(state.role)));
+    document.querySelectorAll('[role=tab]').forEach(b=>{ const on=b.dataset.tab===state.tab; b.setAttribute('aria-selected', on); b.tabIndex = on?0:-1; $('p-'+b.dataset.tab).hidden = !on; });
+    $('kn-half').value = state.half; $('kv-half').textContent = state.half + ' d';
+  }
+
+  // ---------- headline model (web worker, precomputed default) ----------
+  let PL = null, L = null;            // PL: {champs,take,band,leagues}; L: local stats for current filter
+  const key = () => JSON.stringify([state.lgs, String(state.st), String(state.pt), state.half, state.pmult]);
+  const INIT_KEY = JSON.stringify([INIT.filt.lgs, 'all', 'all', INIT.cfg.half, INIT.cfg.pmult]);
+  let worker = null, jobKey = null, wURL = null, bandN = 0;
+  try {
+    const src = $('engine').textContent + `
+let WP = null;
+onmessage = e => {
+  const m = e.data;
+  if (m.type === 'init') { WP = prepGames(m.D); return; }
+  const f = { lgs:new Set(m.filt.lgs), st:m.filt.st, pt:m.filt.pt };
+  const r = plRun(WP, f, m.cfg);
+  const lg = plLeagues(WP, f, { half:m.cfg.half, pmult:m.cfg.pmult });
+  postMessage({ type:'main', key:m.key, champs:r.champs, take:r.take, takeAdj:r.takeAdj, leagues:lg });
+  if (r.champs.length) plBootstrap(WP, f, m.cfg, r, 40, (b, band) => postMessage({ type:'band', key:m.key, b, band }));
+};`;
+    wURL = URL.createObjectURL(new Blob([src], { type:'text/javascript' }));
+  } catch(e) { wURL = null; }
+
+  function setStatus(){
+    const el = $('band-status');
+    if (!PL) { el.className='status busy'; el.innerHTML='<i></i>Updating xPresence…'; return; }
+    if (PL.band && bandN >= 40) { el.className='status done'; el.innerHTML='<i></i>Range from 40 resamples'; }
+    else if (PL.band) { el.className='status busy'; el.innerHTML=`<i></i>Range: ${bandN} of 40 resamples`; }
+    else { el.className='status busy'; el.innerHTML='<i></i>Computing range…'; }
+  }
+  function runPL(){
+    const k = key();
+    if (k === jobKey) return;
+    jobKey = k;
+    if (k === INIT_KEY) {
+      if (worker) { worker.terminate(); worker = null; }
+      PL = { champs:INIT.champs, take:INIT.take, takeAdj:INIT.takeAdj, band:INIT.band, leagues:INIT.leagues }; bandN = 40; renderAll(); return;
+    }
+    document.querySelectorAll('.panel').forEach(p=>p.classList.add('stale'));
+    if (!wURL) { // fallback without a worker: no range
+      setTimeout(() => { const r = plRun(P, filt(), { half:state.half, pmult:state.pmult, adj:ADJ }); PL = { champs:r.champs, take:r.take, takeAdj:r.takeAdj, band:null, leagues:plLeagues(P, filt(), { half:state.half, pmult:state.pmult }) }; bandN = 0; renderAll(); }, 30);
+      return;
+    }
+    if (worker) worker.terminate();
+    worker = new Worker(wURL);
+    worker.onmessage = e => {
+      const m = e.data; if (m.key !== jobKey) return;
+      if (m.type === 'main') { PL = { champs:m.champs, take:m.take, takeAdj:m.takeAdj, band:null, leagues:m.leagues }; bandN = 0; renderAll(); }
+      else if (m.type === 'band' && PL) { PL.band = m.band; bandN = m.b; renderRankings(); setStatus(); }
+    };
+    worker.postMessage({ type:'init', D });
+    worker.postMessage({ type:'run', key:k, filt:{ lgs:state.lgs, st:state.st, pt:state.pt }, cfg:{ half:state.half, pmult:state.pmult, adj:ADJ } });
+    setStatus();
+  }
+
+  // ---------- local stats (cheap) ----------
+  const SLOT_GROUPS = [['Ban · phase 1',['ban1'],1],['Ban · phase 2',['ban2'],1],['FP1 (first pick)',['FP1']],['SP1–SP2',['SP1','SP2']],['FP2–FP3',['FP2','FP3']],['SP3',['SP3']],['SP4',['SP4']],['FP4–FP5',['FP4','FP5']],['SP5 (last pick)',['SP5']],['Pick, order unknown',['unknown']]];
+  function localStats(){
+    const games = filterGames(P, filt());
+    const champs = PL.champs;
+    const st = rawStats(games, champs), ctx = seriesContext(games, champs);
+    const slots = new Map(champs.map(c=>[c,{}]));
+    games.forEach(g => g.acts.forEach(a => { const s = slots.get(a.c); if (s) s[a.slot] = (s[a.slot]||0) + 1; }));
+    const n = games.length;
+    const golRank = new Map([...champs].sort((a,b)=>st.get(b).gol-st.get(a).gol).map((c,i)=>[c,i+1]));
+    const idx = new Map(champs.map((c,i)=>[c,i]));
+    const priRank = new Map([...champs].sort((a,b)=>PL.take[idx.get(b)]-PL.take[idx.get(a)]).map((c,i)=>[c,i+1]));
+    const lgRank = PL.leagues.map(l => { const ix = l.champs.map((c,i)=>[c,l.take[i]]).sort((a,b)=>b[1]-a[1]); return { lg:l.lg, games:l.games, rank:new Map(ix.map(([c],i)=>[c,i+1])), take:new Map(ix) }; });
+    const rows = champs.map((c,i) => { const s = st.get(c), x = ctx.get(c);
+      return { c, name:name(c), take:PL.take[i], adj: PL.takeAdj ? PL.takeAdj[i] : null, chg: ADJ[c] ? (ADJ[c]>1?'up':ADJ[c]<1?'down':'adj') : (ADJ_NOTES[c]?'adj':null), band: PL.band ? PL.band[i] : null, pri:priRank.get(c), gol:golRank.get(c), gap:golRank.get(c)-priRank.get(c),
+        p:s.p, b:s.b, wr: s.p ? s.w/s.p : null, g1: x.series ? x.g1/x.series : null, first: x.series ? x.sumFirst/x.series : null, nser:x.series, dec:x.pressurePicks }; });
+    return { games, n, series:new Set(games.map(g=>g.sid)).size, rows, slots, lgRank, byC:new Map(rows.map(r=>[r.c,r])) };
+  }
+
+  // ---------- rankings ----------
+  function renderSummary(){
+    const rs = [...L.rows].sort((a,b)=>b.take-a.take);
+    const top = rs[0];
+    const mover = rs.slice(0,30).filter(r=>r.gap>0).sort((a,b)=>b.gap-a.gap)[0];
+    const faller = rs.slice(0,30).filter(r=>r.gap<0).sort((a,b)=>a.gap-b.gap)[0];
+    $('summary').innerHTML = `<div><span class="lab">Games</span><b>${L.n}</b></div><div><span class="lab">Series</span><b>${L.series}</b></div>
+      ${top?`<div><span class="lab">Top xPresence</span><b class="nm">${top.name}</b><span class="num muted">${pct(top.take)}%</span></div>`:''}
+      ${mover?`<div><span class="lab">gol.gg underrates</span><b class="nm">${mover.name}</b><span class="num muted">#${mover.pri} here, #${mover.gol} on gol.gg</span></div>`:''}
+      ${faller?`<div><span class="lab">gol.gg overrates</span><b class="nm">${faller.name}</b><span class="num muted">#${faller.pri} here, #${faller.gol} on gol.gg</span></div>`:''}`;
+  }
+  function renderChart(){
+    const top = [...L.rows].sort((a,b)=>b.take-a.take).slice(0,20);
+    const W = 880, rowH = 25, padL = 112, padR = 118, padT = 24, H = padT + top.length*rowH + 6;
+    const x = v => padL + (W-padL-padR) * v;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Top 20 champions by xPresence with 80% ranges and gol.gg rank">`;
+    for (let t=0; t<=1.0001; t+=0.2) {
+      s += `<line x1="${x(t)}" x2="${x(t)}" y1="${padT-6}" y2="${H-4}" stroke="var(--line)"/>`;
+      s += `<text x="${x(t)}" y="${padT-11}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">${Math.round(t*100)}%</text>`;
+    }
+    s += `<text x="${W-padR+30}" y="${padT-11}" font-family="IBM Plex Sans Condensed, sans-serif" font-size="11" letter-spacing=".06em" fill="var(--faint)">GOL.GG RANK</text>`;
+    top.forEach((r,i) => {
+      const y = padT + i*rowH, cy = y + rowH/2;
+      s += `<text x="${padL-10}" y="${cy+4}" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="var(--ink)">${r.name}</text>`;
+      if (r.band) s += `<rect x="${x(r.band[0])}" y="${y+3}" width="${Math.max(2, x(r.band[1])-x(r.band[0]))}" height="${rowH-6}" rx="3" fill="var(--accent-band)"/>`;
+      s += `<rect x="${padL}" y="${cy-4}" width="${Math.max(1,x(r.take)-padL)}" height="8" rx="2" fill="var(--accent)"/>`;
+      if (r.chg && r.adj != null && Math.abs(r.adj - r.take) > 0.002) s += `<path d="M${x(r.adj)} ${cy-7} L${x(r.adj)+5} ${cy} L${x(r.adj)} ${cy+7} L${x(r.adj)-5} ${cy} Z" fill="var(--mix)" stroke="var(--surface)" stroke-width="1"><title>${r.name}: ${pct(r.adj)}% after ${PATCH.patches.join('/')} changes</title></path>`;
+      const lx = Math.max(x(r.take), r.band?x(r.band[1]):x(r.take)) + 6;
+      s += lx > W-padR-4
+        ? `<text x="${x(r.take)-6}" y="${cy+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="500" fill="var(--on-accent)" stroke="var(--accent)" stroke-width="3" paint-order="stroke">${pct(r.take)}</text>`
+        : `<text x="${lx}" y="${cy+4}" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--muted)">${pct(r.take)}</text>`;
+      const col = r.gap>=3 ? 'var(--up)' : r.gap<=-3 ? 'var(--down)' : 'var(--faint)';
+      const arrow = r.gap>=3 ? ' ▲' : r.gap<=-3 ? ' ▼' : '';
+      s += `<text x="${W-padR+30}" y="${cy+4}" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="${col}">#${r.gol}${arrow}</text>`;
+    });
+    $('chart').innerHTML = s + '</svg>';
+  }
+  const RCOLS = [
+    {k:'pri', t:'#', cls:'rk'}, {k:'name', t:'Champion', cls:'name'}, {k:'role', t:'Role', cls:'name', h2:'this summer'},
+    {k:'take', t:'xPresence', h2:'fresh Game 1'}, {k:'adj', t:'Patch-adjusted', h2:PATCH.patches.join(', ')},
+    {k:'gol', t:'gol.gg', h2:'rank'}, {k:'gap', t:'Gap', h2:'vs gol.gg'}, {k:'pb', t:'Picks / bans'},
+  ];
+  function detailHTML(r){
+    const sl = L.slots.get(r.c) || {};
+    const grp = SLOT_GROUPS.map(([lab, keys, ban]) => [lab, keys.reduce((a,k)=>a+(sl[k]||0),0), ban]).filter(g=>g[1]>0 || !g[0].includes('unknown'));
+    const mx = Math.max(1, ...grp.map(g=>g[1]));
+    const slots = grp.map(([lab,v,ban])=>`<div><span>${lab}</span><span class="sb ${ban?'ban':''}" style="width:${Math.round(100*v/mx)}%;min-width:${v?2:0}px"></span><span class="num">${v}</span></div>`).join('');
+    const lg = L.lgRank.map(l => { const rk = l.rank.get(r.c); return `<span>${D.LG[l.lg]} <span class="muted">(${l.games} games)</span></span><span>${rk?`#${rk} · ${pct(l.take.get(r.c))}%`:'–'}</span>`; }).join('');
+    return `<div class="dgrid">
+      <div><h3>How it was drafted</h3><div class="slots">${slots}</div></div>
+      <div><h3>Numbers</h3><div class="kv">
+        <span>xPresence, 80% range</span><span>${r.band?`${pct(r.band[0],0)}–${pct(r.band[1],0)}%`:'…'}</span>
+        <span>Picks · bans</span><span>${r.p} · ${r.b}</span>
+        <span>Win rate when picked</span><span>${r.wr==null?'–':pct(r.wr,0)+'%'}</span></div>
+        <p class="note" style="margin-top:6px">Roles this summer: ${roleText(r.c)}</p>
+        <h3 style="margin-top:12px">Across a series</h3><div class="kv">
+        <span>Series picked in</span><span>${r.nser}</span>
+        <span>First picked in Game 1</span><span>${r.g1==null?'–':pct(r.g1,0)+'%'}</span>
+        <span>Average first-pick game</span><span>${r.first==null?'–':r.first.toFixed(2)}</span>
+        <span>Picks in deciding games</span><span>${r.dec}</span></div></div>
+      <div><h3>Rank by league</h3><div class="kv">${lg}</div>
+        <h3 style="margin-top:12px">Patch notes since this data</h3><p class="note">${ADJ_NOTES[r.c] ? ADJ_NOTES[r.c].join('; ') : 'No changes in ' + PATCH.patches.join(' or ') + '.'}</p></div></div>`;
+  }
+  function renderTable(){
+    const thead = document.querySelector('#rank-tbl thead');
+    thead.innerHTML = '<tr>' + RCOLS.map(c=>`<th tabindex="0" data-k="${c.k}" class="${c.cls||''}" ${state.sort===c.k?`aria-sort="${state.dir<0?'descending':'ascending'}"`:''}>${c.t}${c.h2?`<span class="h2">${c.h2}</span>`:''}</th>`).join('') + '</tr>';
+    const q = ui.q.trim().toLowerCase();
+    const ro = state.role === 'all' ? null : +state.role;
+    let list = L.rows.filter(r => (!q || r.name.toLowerCase().includes(q)) && (ro === null || (RSH[r.c] && RSH[r.c].sh[ro] >= 0.15)));
+    const rrank = new Map([...list].sort((a,b)=>b.take-a.take).map((r,i)=>[r.c,i+1]));
+    if (!RCOLS.some(c=>c.k===state.sort)) { state.sort='take'; state.dir=-1; }
+    const k = state.sort, val = r => k==='pb' ? r.p+r.b : k==='role' ? (RSH[r.c] ? RSH[r.c].main : 9) : k==='pri' && ro !== null ? rrank.get(r.c) : r[k];
+    list.sort((a,b)=> k==='name' ? state.dir*a.name.localeCompare(b.name) : state.dir*((val(a)??-1)-(val(b)??-1)));
+    const maxT = Math.max(...L.rows.map(r=>r.take));
+    const shown = (ui.all || q) ? list : list.slice(0,40);
+    document.querySelector('#rank-tbl tbody').innerHTML = shown.map(r => {
+      const open = ui.open.has(r.c);
+      const gapCls = r.gap>=3?'d-up':r.gap<=-3?'d-dn':'muted';
+      return `<tr class="row" data-c="${r.c}" tabindex="0" aria-expanded="${open}">
+        <td class="rk">${ro===null ? r.pri : rrank.get(r.c)}</td><td class="name">${r.name}</td><td class="rl">${roleLabel(r.c)}</td>
+        <td class="pri"><span class="pbar" style="width:${Math.round(44*r.take/maxT)}px"></span>${pct(r.take)}%</td>
+        <td class="${r.chg==='up'?'d-up':r.chg==='down'?'d-dn':'muted'}">${r.adj==null?'–':pct(r.adj)+'%'}${r.chg==='up'?' ▲':r.chg==='down'?' ▼':''}</td>
+        <td>#${r.gol}</td><td class="${gapCls}">${r.gap>0?'+':''}${r.gap}</td>
+        <td>${r.p} / ${r.b}</td></tr>` +
+        (open ? `<tr class="detail"><td colspan="${RCOLS.length}">${detailHTML(r)}</td></tr>` : '');
+    }).join('');
+    $('more').parentElement.hidden = !!q || list.length <= 40;
+    $('more').textContent = ui.all ? 'Show top 40' : `Show all ${list.length}`;
+  }
+  function renderRankings(){ if (!PL) return; L.rows.forEach((r,i)=>{ const j = PL.champs.indexOf(r.c); r.band = PL.band ? PL.band[j] : null; }); renderChart(); renderTable(); }
+
+  // ---------- leagues heatmap ----------
+  function renderHeat(){
+    const top = [...L.rows].sort((a,b)=>b.take-a.take).slice(0,30);
+    const hs = state.heatSort;
+    if (hs !== 'all') { const lr = L.lgRank[+hs]; top.sort((a,b)=>(lr.rank.get(a.c)||999)-(lr.rank.get(b.c)||999)); }
+    const head = `<thead><tr><th class="name" data-h="all" ${hs==='all'?'aria-sort="descending"':''}>Champion<span class="h2">overall rank</span></th>` +
+      L.lgRank.map(l=>`<th data-h="${l.lg}" ${String(hs)===String(l.lg)?'aria-sort="ascending"':''}>${D.LG[l.lg]}<span class="h2">${l.games} games</span></th>`).join('') + '</tr></thead>';
+    const body = top.map(r => `<tr><td class="name">${r.name} <span class="muted num" style="font-size:12px">#${r.pri}</span></td>` +
+      L.lgRank.map(l => { const t = l.take.get(r.c), rk = l.rank.get(r.c);
+        if (!rk) return `<td class="cell muted">–</td>`;
+        const a = Math.round(Math.pow(t, 0.8) * 85);
+        return `<td class="cell${rk<=5?' top5':''}" title="${r.name}: #${rk} in ${D.LG[l.lg]}, ${pct(t)}%" style="background:color-mix(in srgb, var(--accent) ${a}%, transparent);color:${a>48?'var(--on-accent)':'var(--ink)'}">${rk}</td>`; }).join('') + '</tr>').join('');
+    $('heat').innerHTML = head + '<tbody>' + body + '</tbody>';
+  }
+
+  // ---------- fearless scatter ----------
+  function renderScatter(){
+    const pts = L.rows.filter(r => r.nser >= 15);
+    const W = 880, H = 420, pl = 56, pr = 24, pt = 20, pb = 44;
+    if (!pts.length) { $('scatter').innerHTML = '<p class="note">Not enough multi-game series in this filter.</p>'; return; }
+    const yMax = Math.max(2.6, Math.ceil(Math.max(...pts.map(r=>r.first))*5)/5);
+    const x = v => pl + (W-pl-pr) * v, y = v => pt + (H-pt-pb) * (v-1)/(yMax-1);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="xPresence against average game of first pick">`;
+    for (let t=0; t<=1.0001; t+=0.2) s += `<line x1="${x(t)}" x2="${x(t)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)"/><text x="${x(t)}" y="${H-pb+16}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">${Math.round(t*100)}%</text>`;
+    for (let g=1; g<=yMax+1e-9; g+=0.5) s += `<line x1="${pl}" x2="${W-pr}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="${pl-8}" y="${y(g)+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">G${g}</text>`;
+    s += `<text x="${(pl+W-pr)/2}" y="${H-8}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="var(--muted)">xPresence →</text>`;
+    s += `<text x="${pl+8}" y="${pt+14}" font-family="IBM Plex Sans Condensed, sans-serif" font-size="11" letter-spacing=".06em" fill="var(--faint)">USED EARLY</text>`;
+    s += `<text x="${pl+8}" y="${H-pb-8}" font-family="IBM Plex Sans Condensed, sans-serif" font-size="11" letter-spacing=".06em" fill="var(--faint)">SAVED FOR LATER</text>`;
+    const label = new Set([...pts].sort((a,b)=>b.take-a.take).slice(0,14).map(r=>r.c).concat([...pts].filter(r=>r.take>=0.2).sort((a,b)=>b.first-a.first).slice(0,4).map(r=>r.c)));
+    pts.forEach(r => { s += `<circle cx="${x(r.take)}" cy="${y(r.first)}" r="${label.has(r.c)?5:3.5}" fill="${label.has(r.c)?'var(--accent)':'var(--faint)'}" fill-opacity="${label.has(r.c)?1:.6}"><title>${r.name}: xPresence ${pct(r.take)}%, first picked in game ${r.first.toFixed(2)} on average (${r.nser} series)</title></circle>`; });
+    pts.filter(r=>label.has(r.c)).forEach(r => { const right = x(r.take) > W - 140; s += `<text x="${x(r.take)+(right?-8:8)}" y="${y(r.first)+4}" text-anchor="${right?'end':'start'}" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="var(--ink)">${r.name}</text>`; });
+    $('scatter').innerHTML = s + '</svg>';
+  }
+
+
+  // ---------- evidence: results table + calibration ----------
+  function renderResults(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%';
+    const h5 = ROLL.half.find(x=>x.h===5);
+    const rel = o => Math.exp(btRow(o,'Plackett–Luce + recency').ll - btRow(o,'gol.gg-style PrioScore').ll) - 1;
+    const m = MSI.rows[0], pa = PADJ.gap.h5.flat.perTest;
+    const paWon = pa.filter(v=>v>0).length, paLost = pa.filter(v=>v<0).length;
+    const rows = [
+      ['grp','Against gol.gg’s PrioScore'],
+      { t:'Domestic patches, 2025–2026', sub:'six leagues, rolling', n:ROLL.domTests, won:`${h5.domBeats} of ${ROLL.domTests}`, gain:f(h5.dom), d:'d-rolling' },
+      { t:'International events, 2025–2026', sub:'First Stand, MSI, Worlds', n:ROLL.intlTests, won:`${h5.intlBeats} of ${ROLL.intlTests}`, gain:f(h5.intl), d:'d-rolling' },
+      { t:'MSI 2026 rehearsal', sub:'spring data only, 10-day setting', n:1, won:'1 of 1', gain:`${f(m.vsGol)} <span class="muted">(${(m.lo*100).toFixed(0)} to ${(m.hi*100).toFixed(0)}%)</span>`, d:'d-msi' },
+      { t:'Summer splits', sub:'first check, 21-day recency', n:BT.length, won:`${BT.filter(o=>rel(o)>0).length} of ${BT.length}`, gain:BT.map(o=>f(rel(o))).join(', '), d:'d-archive' },
+      ['grp','Add-ons, against the same model without them'],
+      { t:'Patch-notes adjustment, ×1.25', sub:'2–3 patches behind, like Worlds', n:pa.length, won:`${paWon} of ${pa.length}`+(paLost?` <span class="muted">(${paLost} lost)</span>`:''), gain:(PADJ.gap.h5.flat.loo>=0?'+':'')+PADJ.gap.h5.flat.loo.toFixed(2)+'%', d:'d-patchadj', note:'in use' },
+      { t:'Deciding games counted 1.5×', sub:'rolling tests, domestic', n:ROLL.domTests, won:'–', gain:f(ROLL.extra.dec[0][0]-ROLL.extra.nodec[0][0]).replace('+0.0%','±0.0%')+' <span class="muted">no effect</span>', d:'d-rolling', note:'retired' },
+      { t:'Per-role correction', sub:'Game 1 take rates, scaled by role', n:ROLEX.cal.total, won:`${ROLEX.cal.beats} of ${ROLEX.cal.total}`, gain:`+${Math.abs(ROLEX.cal.loss).toFixed(2)}% <span class="muted">lower log-loss</span>`, d:'d-roles', note:'Worlds test' },
+      { t:'Role-aware draft model', sub:'predicting the next pick or ban', n:ROLEX.tests, won:`${ROLEX.draft.beats} of ${ROLEX.tests}`, gain:f(ROLEX.draft.gain), d:'d-roles', note:'not in xPresence' },
+      { t:'Series depth, per-team average', sub:'weighted score, summer splits and MSI', n:3, won:'0 of 3', gain:'<span class="d-dn">worse in every test</span>', d:'d-archive', note:'retired' },
+    ];
+    $('res-tbl').innerHTML = `<thead><tr><th>Test</th><th>Tests</th><th>Won</th><th>Gain<span class="h2">per draft action</span></th><th></th></tr></thead><tbody>` +
+      rows.map(r => Array.isArray(r) ? `<tr class="grp"><td colspan="5">${r[1]}</td></tr>` :
+        `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}">Details</button></td></tr>`).join('') + '</tbody>';
+    $('res-note').textContent = `Headline: xPresence beat gol.gg in ${h5.domBeats + h5.intlBeats} of ${ROLL.domTests + ROLL.intlTests} rolling tests across ${ROLL.games.toLocaleString()} games at the current 5-day setting. Almost all of the gain comes from weighting recent games; without it, xPresence roughly ties gol.gg.`;
+  }
+  function renderRoles(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%', X = ROLEX;
+    $('role-verdict').innerHTML = `<b>Roles explain how a draft unfolds, not what gets taken.</b> Knowing which roles each team still needs predicts the next pick or ban ${f(X.draft.gain)} better than plain xPresence, in all ${X.tests} tests. But when the same model is turned into Game 1 take rates, it beat plain xPresence in only ${X.take.beats} of ${X.tests} tests, so xPresence stays as it is. The one gap roles do expose is supports: they get taken more than xPresence expects. A simple per-role correction helped in ${X.cal.beats} of ${X.cal.total} tests and goes into the Worlds test plan as a comparison model.`;
+    $('role-bias').innerHTML = `<thead><tr><th>Main role</th><th>xPresence expects</th><th>Actually taken</th><th>Mid-tier taken<span class="h2">rated 30–50%</span></th></tr></thead><tbody>` +
+      RL.map((r,i)=>{ const [p,a] = X.bias.plain[i], [bp,ba] = X.band[i], d = a-p;
+        return `<tr class="${i===4?'hl':''}"><td>${r}</td><td class="num">${p.toFixed(2)}</td><td class="num ${Math.abs(d)>=0.2?(d>0?'d-up':'d-dn'):''}">${a.toFixed(2)}</td><td class="num">${pct(ba,0)}% <span class="muted">vs ${pct(bp,0)}%</span></td></tr>`; }).join('') + '</tbody>';
+    $('role-notes').innerHTML = [
+      `<b>Role-aware draft model.</b> Each pick is weighted by whether the team still needs that champion's role, and each phase-2 ban by whether the opponent does. Picks became ${f(X.draft.pick)} more predictable and bans ${f(X.draft.ban)}. Leaning bans harder on the opponent's open roles pushed the total to ${f(X.draft.lam9)}. Guessing roles from champions instead of using the real ones still gave ${f(X.draft.soft)}.`,
+      `<b>Its Game 1 take rates</b> were no better than plain xPresence and made the support gap slightly worse (${X.bias.hard[4][0].toFixed(2)} expected vs ${X.bias.hard[4][1].toFixed(2)} actual): with two picks per role guaranteed, the gap is in bans, and teams ban supports more than their pick strength suggests.`,
+      `<b>Per-role correction.</b> Scales each role's take rates so they match recent Game 1s; supports typically get about ×${X.cal.supK.toFixed(2)}. Out of sample it lowered log-loss by ${Math.abs(X.cal.loss).toFixed(2)}%, about the same size as the patch-notes adjustment.`,
+      `Roles come from Oracle's Elixir, which lists every player's role; all 5,105 games matched.`
+    ].map(t=>`<li>${t}</li>`).join('');
+  }
+  function renderCalib(){
+    const W = 420, H = 380, pl = 48, pr = 14, pt = 12, pb = 40;
+    const x = v => pl + (W-pl-pr)*v, y = v => H-pb - (H-pt-pb)*v;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Predicted xPresence against how often champions were actually taken" style="min-width:0;max-width:460px">`;
+    for (let t=0; t<=1.0001; t+=0.2) {
+      s += `<line x1="${x(t)}" x2="${x(t)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)"/><text x="${x(t)}" y="${H-pb+15}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${Math.round(t*100)}%</text>`;
+      s += `<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(t)+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${Math.round(t*100)}%</text>`;
+    }
+    s += `<line x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
+    s += `<text x="${(pl+W-pr)/2}" y="${H-6}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="var(--muted)">Predicted xPresence →</text>`;
+    s += `<text transform="translate(12 ${(pt+H-pb)/2}) rotate(-90)" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="var(--muted)">Actually picked or banned →</text>`;
+    const series = [['domestic','var(--accent)','Domestic'],['international','var(--mix)','International']];
+    const maxN = Math.max(...Object.values(CAL.bins).flat().map(b=>b.n));
+    series.forEach(([k,col]) => {
+      const B = CAL.bins[k];
+      s += `<polyline points="${B.map(b=>`${x(b.pred)},${y(b.act)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="1.5" stroke-opacity=".6"/>`;
+      B.forEach(b => { const r = 3 + 6*Math.sqrt(b.n/maxN);
+        s += `<circle cx="${x(b.pred)}" cy="${y(b.act)}" r="${r}" fill="${col}" stroke="var(--surface)" stroke-width="1"><title>${k}: predicted ${pct(b.pred)}% on average, actually taken ${pct(b.act)}% (${b.n.toLocaleString()} champion-games)</title></circle>`; });
+    });
+    s += `<g font-family="IBM Plex Sans, sans-serif" font-size="11.5">` + series.map(([k,col,lab],i)=>`<circle cx="${pl+14}" cy="${pt+14+i*18}" r="5" fill="${col}"/><text x="${pl+24}" y="${pt+18+i*18}" fill="var(--ink)">${lab}</text>`).join('') + `</g>`;
+    $('calib').innerHTML = s + '</svg>';
+    const top = k => CAL.bins[k][CAL.bins[k].length-1], mid = k => CAL.bins[k].find(b=>b.a===0.3);
+    $('calib-notes').innerHTML = [
+      `Domestic: close to the line everywhere. Champions rated 90%+ were taken ${pct(top('domestic').act,0)}% of the time (predicted ${pct(top('domestic').pred,0)}%).`,
+      `International: accurate up to about 70%, but the top is still a little high. Champions rated 90%+ were taken ${pct(top('international').act,0)}% of the time (predicted ${pct(top('international').pred,0)}%), from ${top('international').n} champion-games, so the gap is uncertain. At the old 10-day setting it was larger.`,
+      `Both are slightly low in the 30–50% range (predicted ${pct(mid('domestic').pred,0)}%, taken ${pct(mid('domestic').act,0)}% domestic): mid-priority champions get taken a bit more than xPresence expects.`,
+      `Of xPresence's top 10 going into a Game 1, an average of ${CAL.top10.domestic.perG1} were picked or banned domestically and ${CAL.top10.international.perG1} at international events.`
+    ].map(t=>`<li>${t}</li>`).join('');
+  }
+
+  // ---------- evidence details, archive, snapshot ----------
+  const btRow = (o, n) => o.rows.find(r => r.name === n);
+  const verdict = rowName => { const d = BT.map(o => btRow(o,rowName).ll - btRow(o,'Base (availability-adjusted)').ll).concat([MSI.rows.find(r=>r.name===rowName).ll - MSI.rows.find(r=>r.name==='Base (availability-adjusted)').ll]);
+    if (d.every(x => x > 0.002)) return ['help','Backtest: helps']; if (d.every(x => x < -0.002)) return ['hurt','Backtest: hurts']; return ['mixed','Backtest: neutral']; };
+  function renderBacktest(){
+    const rel = (o, n) => Math.exp(btRow(o,n).ll - btRow(o,'gol.gg-style PrioScore').ll) - 1;
+    const data = BT[0].rows.map(r=>r.name).map(n => ({ n, a: rel(BT[0],n), b: rel(BT[1],n), rho: btRow(BT[1],n).rho })).sort((x,y) => (y.a+y.b) - (x.a+x.b));
+    const mx = Math.max(...data.map(d=>Math.max(Math.abs(d.a),Math.abs(d.b))));
+    const cell = v => `<span class="bbar" style="width:${Math.round(56*Math.abs(v)/mx)}px;background:${v>=0?'var(--up)':'var(--down)'}"></span>${v>=0?'+':''}${(v*100).toFixed(1)}%`;
+    const nm = n => n==='Plackett–Luce + recency' ? 'xPresence (Plackett–Luce + recency)' : n;
+    $('bt').innerHTML = `<thead><tr><th>Model</th><th>Predict 16.16–16.17<span class="h2">from 16.14–16.15</span></th><th>Predict 16.17<span class="h2">from 16.14–16.16</span></th><th>Rank corr.<span class="h2">with later-patch weighted score</span></th></tr></thead><tbody>` +
+      data.map(d => `<tr class="${d.n==='Plackett–Luce + recency'?'hl':''}"><td>${nm(d.n)}</td><td class="num">${cell(d.a)}</td><td class="num">${cell(d.b)}</td><td class="num">${d.rho.toFixed(3)}</td></tr>`).join('') + '</tbody>';
+    $('bt-note').textContent = `Test sets: ${BT[0].test} games (${BT[0].actions.toLocaleString()} picks and bans) and ${BT[1].test} games (${BT[1].actions.toLocaleString()}). Recency here uses a 21-day half-life unless noted. The 10-day setting used until Sep 26 was chosen from these same splits, so its edge here is a little optimistic.`;
+  }
+  const ADD = [
+    { id:'depth', key:'useDepth', title:'1 · Series depth', bt:'Base + series depth', desc:'Weighted each game by the share of last patch\'s top-N champions still unpicked in the series.', retired:true },
+    { id:'shrink', key:'useShrink', title:'2 · Small-sample shrink', bt:'Base + shrink', desc:'Pulls scores toward the average by k phantom games.', knob:{ id:'k', label:'k', min:0, max:40, step:1 } },
+    { id:'team', key:'useTeam', title:'3 · Per-team average', bt:'Base + per-team', desc:'Scored each team separately, then averaged across teams.', retired:true },
+    { id:'recency', key:'useRecency', title:'4 · Recency', bt:'Base + recency', desc:'Uses the half-life from xPresence settings above.' },
+    { id:'pressure', key:'usePressure', title:'5 · Deciding games', bt:'Base + deciding games', desc:'Counted Game 3 at 1–1 and Game 5 at 2–2 extra.', retired:true, retiredWhy:'It helped slightly in the first tests but had no measurable effect across the 31 rolling tests, so it was dropped from xPresence and the weighted score on Sep 26.' },
+  ];
+  state.lab.useDepth = false; state.lab.useTeam = false; state.lab.usePressure = false; state.pmult = 1;
+  $('addons').innerHTML = ADD.map(a => { const [cls, txt] = a.verdict || verdict(a.bt);
+    if (a.retired) return `<div class="addon retired" id="card-${a.id}"><label class="tog"><input type="checkbox" id="use-${a.id}" disabled> ${a.title} <span class="badge b-hurt">Retired Sep 26</span></label><p>${a.desc} ${a.retiredWhy || "It did worse than the plain score in all three tests (both summer splits and MSI), so it's switched off for good."} Its column stays in the table below for the record.</p></div>`;
+    return `<div class="addon" id="card-${a.id}"><label class="tog"><input type="checkbox" id="use-${a.id}"> ${a.title} <span class="badge b-${cls}">${txt}</span></label><p>${a.desc}</p>
+      ${a.knob ? `<div class="knob"><label for="kn-${a.knob.id}">${a.knob.label}</label><input type="range" id="kn-${a.knob.id}" min="${a.knob.min}" max="${a.knob.max}" step="${a.knob.step}"><span class="num" id="kv-${a.knob.id}"></span></div>` : ''}</div>`; }).join('');
+  const LCOLS = [ {k:'rk',t:'#',cls:'rk'}, {k:'name',t:'Champion',cls:'name'}, {k:'pres',t:'Presence'}, {k:'golS',t:'gol.gg-style'},
+    {k:'base',t:'Base',grp:'add'}, {k:'depth',t:'+ Depth',h2:'retired',grp:'add'}, {k:'shrink',t:'+ Shrink',grp:'add'}, {k:'team',t:'+ Per-team',h2:'retired',grp:'add'},
+    {k:'recency',t:'+ Recency',grp:'add'}, {k:'pressure',t:'+ Deciding',h2:'retired',grp:'add'}, {k:'mix',t:'Weighted mix',h2:'toggled add-ons'}, {k:'take',t:'xPresence',h2:'for reference'} ];
+  function renderLab(){
+    ADD.forEach(a => { $('use-'+a.id).checked = state.lab[a.key]; $('card-'+a.id).classList.toggle('on', state.lab[a.key]);
+      if (a.knob) { $('kn-'+a.knob.id).value = state.lab[a.knob.id]; $('kv-'+a.knob.id).textContent = state.lab[a.knob.id]; } });
+    const R = computeAll(P, filt(), { ...state.lab, half:state.half, pmult:1.5, usePressure:false, pl:false });
+    const n = R.games.length;
+    const rows = R.champs.map(c => { const s = R.st.get(c), lr = L.byC.get(c);
+      return { c, name:name(c), pres:(s.p+s.b)/n, golS:s.gol/n, base:R.base.get(c), depth:R.depth.get(c), shrink:R.shrink.get(c), team:R.team.get(c), recency:R.recency.get(c), pressure:R.pressure.get(c), mix:R.mix.get(c), take: lr ? lr.take : null, rk:R.ranks.mix.get(c) }; });
+    const k = state.lab.sort; rows.sort((a,b)=> k==='name' ? state.lab.dir*a.name.localeCompare(b.name) : state.lab.dir*((a[k]??-1)-(b[k]??-1)));
+    document.querySelector('#lab-tbl thead').innerHTML = '<tr>' + LCOLS.map(c=>`<th tabindex="0" data-k="${c.k}" class="${c.cls||''} ${c.grp?'grp-'+c.grp:''}" ${k===c.k?`aria-sort="${state.lab.dir<0?'descending':'ascending'}"`:''}>${c.t}${c.h2?`<span class="h2">${c.h2}</span>`:''}</th>`).join('') + '</tr>';
+    const shown = ui.labAll ? rows : rows.slice(0,25);
+    document.querySelector('#lab-tbl tbody').innerHTML = shown.map(r => '<tr>' + LCOLS.map(c => c.k==='name' ? `<td class="name">${r.name}</td>` : c.k==='rk' ? `<td class="rk">${r.rk}</td>` : `<td>${r[c.k]==null?'–':pct(r[c.k])}</td>`).join('') + '</tr>').join('');
+    $('lab-more').textContent = ui.labAll ? 'Show top 25' : `Show all ${rows.length}`;
+  }
+  function renderPatchAdj(){
+    const f = v => (v>=0?'+':'')+v.toFixed(2)+'%';
+    const keys = ['flat','tiers3','tiers','wrNotes','wrAll'];
+    const setting = (k,v) => k==='flat' ? '×'+v : k==='tiers3' ? `small ×${Math.exp(v.small).toFixed(2)}, medium ×${Math.exp(v.medium).toFixed(2)}, large ×${Math.exp(v.large).toFixed(2)}` : k==='tiers' ? '×'+Math.exp(v).toFixed(2)+' per tier step' : 'strength × e^('+v+' × win-rate shift in points)';
+    $('pa-verdict').innerHTML = `<b>Neither way of sizing changes beat a simple flat factor.</b> When the model is one patch behind, no adjustment helps (all within ±0.15%). When it's two or three patches behind, as it will be at Worlds, a gentle flat ×1.25 (+${PADJ.gap.h5.flat.loo.toFixed(2)}%) and separately tuned size tiers (+${PADJ.gap.h5.tiers3.loo.toFixed(2)}%) help a little and consistently. The win-rate shift had the biggest single win (+${Math.max(...PADJ.gap.h5.wrNotes.perTest).toFixed(1)}% on 16.14) but lost on three of six tests. All of these are small next to recency.`;
+    $('pa-tbl').innerHTML = `<thead><tr><th>Method</th><th>One patch behind<span class="h2">${PADJ.next.tests.length} tests, out of sample</span></th><th>2–3 patches behind<span class="h2">${PADJ.gap.tests.length} tests, out of sample</span></th><th>Best setting<span class="h2">on the gap tests</span></th></tr></thead><tbody>` +
+      keys.map(k => `<tr class="${k==='flat'||k==='tiers3'?'hl':''}"><td>${PADJ.names[k]}</td><td class="num ${PADJ.next.h5[k].loo>=0?'d-up':'d-dn'}">${f(PADJ.next.h5[k].loo)}</td><td class="num ${PADJ.gap.h5[k].loo>=0?'d-up':'d-dn'}">${f(PADJ.gap.h5[k].loo)}</td><td class="num">${setting(k,PADJ.gap.h5[k].best)}</td></tr>`).join('') + '</tbody>';
+    $('pa-note').textContent = `Gain over xPresence with no adjustment (5-day half-life), per draft action. "Out of sample" means each test's setting was chosen on the other tests only. For comparison, the ×1.5 flat factor from the MSI check scored ${f(PADJ.gap.h5.flat15.pooled)} on the gap tests; it overshot on some patches. Gap tests: ${PADJ.gap.tests.map(t=>t.label).join('; ')}. Buff/nerf sizes come from the official patch notes, labeled small/medium/large by a fixed rubric (1–2 minor numbers / several numbers or one 10–25% change / many or >25% changes or new mechanics). Win-rate shifts are Diamond+ solo queue from LoLalytics, which only keeps history back to 16.9, so this test is limited to 2026.`;
+  }
+  function renderRolling(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%';
+    const H = ROLL.half, h10 = H.find(x=>x.h===10), h5 = H.find(x=>x.h===5), h0 = H.find(x=>x.h===0);
+    $('roll-verdict').innerHTML = `<b>xPresence held up across ${ROLL.domTests + ROLL.intlTests} tests.</b> It beat gol.gg's PrioScore on ${h10.domBeats} of ${ROLL.domTests} patches in the six leagues (${f(h10.dom)} pooled) and on all ${ROLL.intlTests} international events (${f(h10.intl)}), across ${(ROLL.domActions+ROLL.intlActions).toLocaleString()} picks and bans from ${ROLL.games.toLocaleString()} games. A shorter half-life does a little better: 5 days gives ${f(h5.dom)} and ${f(h5.intl)}, and makes the percentages accurate at international events without any other correction, so xPresence switched to 5 days on Sep 26.`;
+    $('roll-half').innerHTML = `<thead><tr><th>Half-life</th><th>Domestic<span class="h2">${ROLL.domTests} patches</span></th><th>Beats gol.gg</th><th>International<span class="h2">${ROLL.intlTests} events</span></th><th>Beats gol.gg</th></tr></thead><tbody>` +
+      H.map(x=>`<tr class="${x.h===5?'hl':''}"><td>${x.h? x.h+' days' : 'No recency'}${x.h===5?' (current)':x.h===10?' (until Sep 26)':''}</td><td class="num">${f(x.dom)}</td><td class="num">${x.domBeats}/${ROLL.domTests}</td><td class="num">${f(x.intl)}</td><td class="num">${x.intlBeats}/${ROLL.intlTests}</td></tr>`).join('') + '</tbody>';
+    const e = ROLL.extra, c = ROLL.cal;
+    $('roll-notes').innerHTML = [
+      `Recency is almost the whole edge. Without it, xPresence scores ${f(h0.dom)} domestic and ${f(h0.intl)} international, about the same as gol.gg.`,
+      `The hand-weighted score with 10-day recency trails xPresence: ${f(e.base_rec10[0][0])} domestic, ${f(e.base_rec10[1][0])} international.`,
+      `Deciding-game weighting has no measurable effect (${f(e.dec[0][0])} with it, ${f(e.nodec[0][0])} without, domestic).`,
+      `Confidence: at 10 days, xPresence's percentages are right for domestic play but slightly too high for international events (best-fit scale ${c[10].international} vs 1.00 = accurate). At 5 days they're accurate for international events (${c[5].international}) and slightly too cautious domestically (${c[5].domestic}).`,
+      `The only domestic patch where xPresence lost was 16.3 (early 2026, after the season-start changes).`,
+      `The patch-notes adjustment was tested separately; see below.`
+    ].map(t=>`<li>${t}</li>`).join('');
+    const T = ROLL.tests, rowH = 17, W = 880, padL = 96, padR = 60, gap = 22;
+    const dom = T.filter(t=>t.kind==='domestic'), intl = T.filter(t=>t.kind==='international');
+    const all = dom.concat([null]).concat(intl);
+    const lo = Math.min(-0.1, ...T.map(t=>Math.min(t.h10,t.h5))), hi = Math.max(...T.map(t=>Math.max(t.h10,t.h5)));
+    const x = v => padL + (W-padL-padR) * (v-lo)/(hi-lo);
+    const H2 = 40 + all.length*rowH + gap;
+    let s2 = `<svg viewBox="0 0 ${W} ${H2}" role="img" aria-label="xPresence versus gol.gg in every rolling test">`;
+    for (let t = Math.ceil(lo*10)/10; t <= hi+1e-9; t += 0.1) s2 += `<line x1="${x(t)}" x2="${x(t)}" y1="18" y2="${H2-4}" stroke="${Math.abs(t)<1e-9?'var(--muted)':'var(--line)'}"/><text x="${x(t)}" y="12" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${t>0?'+':''}${Math.round(t*100)}%</text>`;
+    let y = 38;
+    all.forEach(t => {
+      if (!t) { y += gap - rowH; s2 += `<text x="4" y="${y+10}" font-family="IBM Plex Sans Condensed, sans-serif" font-size="10.5" letter-spacing=".06em" fill="var(--faint)">INTERNATIONAL</text>`; y += rowH; return; }
+      const cy = y + rowH/2;
+      s2 += `<text x="${padL-8}" y="${cy+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink)">${t.label}</text>`;
+      s2 += `<rect x="${Math.min(x(0),x(t.h10))}" y="${cy-4}" width="${Math.max(1,Math.abs(x(t.h10)-x(0)))}" height="8" rx="2" fill="${t.h10>=0?'var(--accent)':'var(--down)'}"><title>${t.label}: ${f(t.h10)} at 10 days, ${f(t.h5)} at 5 days (${t.test} games)</title></rect>`;
+      s2 += `<circle cx="${x(t.h5)}" cy="${cy}" r="3.2" fill="var(--mix)"/>`;
+      s2 += `<text x="${W-padR+6}" y="${cy+4}" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--muted)">${f(t.h10)}</text>`;
+      y += rowH;
+    });
+    s2 += `<text x="4" y="33" font-family="IBM Plex Sans Condensed, sans-serif" font-size="10.5" letter-spacing=".06em" fill="var(--faint)">PATCHES</text>`;
+    $('roll-chart').innerHTML = s2 + '</svg>';
+  }
+  function renderMSI(){
+    const x = MSI.rows[0], f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%';
+    $('msi-verdict').innerHTML = `<b>xPresence passed.</b> Built from ${MSI.train} spring games (patches 16.6–16.11), it found MSI's real picks and bans ${(x.vsGol*100).toFixed(1)}% more likely than gol.gg's PrioScore did (90% range ${(x.lo*100).toFixed(0)}–${(x.hi*100).toFixed(0)}%), the best of ${MSI.rows.length} models. MSI was played on 16.13, two patches past the training data, which is the same kind of gap Worlds will have. Nearly all of the edge comes from recency: without it, the same models tie or trail gol.gg.`;
+    const mx = Math.max(...MSI.rows.map(r=>Math.abs(r.vsGol)));
+    const cell = v => `<span class="bbar" style="width:${Math.round(56*Math.abs(v)/mx)}px;background:${v>=0?'var(--up)':'var(--down)'}"></span>${f(v)}`;
+    $('msi-bt').innerHTML = `<thead><tr><th>Model</th><th>vs gol.gg at MSI<span class="h2">per draft action</span></th><th>90% range<span class="h2">resampling MSI series</span></th><th>Rank corr.<span class="h2">with MSI weighted score</span></th></tr></thead><tbody>` +
+      MSI.rows.map(r => `<tr class="${r.name.startsWith('xPresence as')?'hl':''}"><td>${r.name}</td><td class="num">${cell(r.vsGol)}</td><td class="num muted">${r.name.startsWith('gol.gg')?'–':f(r.lo)+' to '+f(r.hi)}</td><td class="num">${r.rho.toFixed(3)}</td></tr>`).join('') + '</tbody>';
+    $('msi-pred').innerHTML = MSI.pred.predTop.map((r,i)=>`<span>${i+1}. ${r.n} <span class="muted">(${pct(r.x,0)}%)</span></span><span class="${r.msiRank<=10?'d-up':'muted'}">#${r.msiRank} at MSI</span>`).join('');
+    $('msi-act').innerHTML = MSI.pred.actualTop.map((r,i)=>`<span>${i+1}. ${r.n} <span class="muted">(${pct(r.msi,0)}% presence)</span></span><span class="${r.xRank<=10?'d-up':r.xRank>20?'d-dn':'muted'}">#${r.xRank} going in</span>`).join('');
+    $('msi-note').textContent = `Test: ${MSI.test} MSI games in ${MSI.series} series (${MSI.actions.toLocaleString()} picks and bans). ${MSI.pred.hitTop10} of xPresence's top 10 finished in MSI's top 10. The big misses, Poppy (#57 going in, #4 at MSI) and Camille (#70 going in, #12 at MSI), barely appeared in the spring data, which is what a patch change looks like. Rank correlations are close for every model; the differences are in how confidently each one called the top picks. Training used every spring split and playoff from the six leagues (${MSI.train} games). All data here comes from Oracle's Elixir, and fearless held in every series. The 10-day half-life was chosen on summer data before this test, so this result is out of sample.`;
+  }
+  function renderSnap(){
+    const e = Object.entries(SNAP.champs);
+    $('snap-pl').innerHTML = e.slice(0,10).map(([n,v])=>`<li>${n}<span>${pct(v.plTake)}%</span></li>`).join('');
+    $('snap-mix').innerHTML = [...e].sort((a,b)=>b[1].plTakeAdj-a[1].plTakeAdj).slice(0,10).map(([n,v])=>`<li>${n}<span>${pct(v.plTakeAdj)}%</span></li>`).join('');
+  }
+
+  // ---------- orchestration ----------
+  function renderAll(){
+    syncControls(); setStatus();
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('stale'));
+    if (!PL) return;
+    L = localStats();
+    renderSummary(); renderRankings(); renderHeat(); renderScatter();
+    if ($('d-archive').open) renderLab();
+    save();
+  }
+  function changed(){ syncControls(); save(); runPL(); }
+  let tmr; const soon = fn => { clearTimeout(tmr); tmr = setTimeout(fn, 220); };
+
+  document.querySelectorAll('#seg-lg button').forEach(b=>b.addEventListener('click',()=>{ const v=+b.dataset.v, has=state.lgs.includes(v); if (has && state.lgs.length===1) return; state.lgs = has ? state.lgs.filter(x=>x!==v) : [...state.lgs, v].sort(); changed(); }));
+  $('lg-all').addEventListener('click',()=>{ state.lgs=[0,1,2,3,4,5]; changed(); });
+  document.querySelectorAll('#seg-st button').forEach(b=>b.addEventListener('click',()=>{ state.st=b.dataset.v; changed(); }));
+  document.querySelectorAll('#seg-pt button').forEach(b=>b.addEventListener('click',()=>{ state.pt=b.dataset.v==='all'?'all':+b.dataset.v; changed(); }));
+  document.querySelectorAll('[role=tab]').forEach(b=>b.addEventListener('click',()=>{ state.tab=b.dataset.tab; syncControls(); save(); try { history.replaceState(null,'','#'+state.tab); } catch(e) {} }));
+  document.querySelector('[role=tablist]').addEventListener('keydown', e => { if (e.key!=='ArrowRight' && e.key!=='ArrowLeft') return; const tabs=[...document.querySelectorAll('[role=tab]')]; const i=tabs.findIndex(t=>t.dataset.tab===state.tab); const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length]; n.click(); n.focus(); });
+  $('kn-half').addEventListener('input', e => { state.half = +e.target.value; $('kv-half').textContent = state.half+' d'; soon(changed); });
+  $('reset-pl').addEventListener('click', () => { state.half = DEF.half; changed(); });
+  $('q').addEventListener('input', e => { ui.q = e.target.value; renderTable(); });
+  document.querySelectorAll('#seg-role button').forEach(b=>b.addEventListener('click',()=>{ state.role = b.dataset.v==='all' ? 'all' : +b.dataset.v; syncControls(); renderTable(); save(); }));
+  $('more').addEventListener('click', () => { ui.all = !ui.all; renderTable(); });
+  const rankSort = th => { const k = th.dataset.k; if (state.sort===k) state.dir*=-1; else { state.sort=k; state.dir = ['name','pri','gol','role'].includes(k)?1:-1; } renderTable(); save(); };
+  document.querySelector('#rank-tbl thead').addEventListener('click', e => { const th=e.target.closest('th'); if (th) rankSort(th); });
+  document.querySelector('#rank-tbl thead').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { const th=e.target.closest('th'); if (th) { e.preventDefault(); rankSort(th); } } });
+  const toggleRow = tr => { const c = +tr.dataset.c; ui.open.has(c) ? ui.open.delete(c) : ui.open.add(c); renderTable(); const again = document.querySelector(`#rank-tbl tr.row[data-c="${c}"]`); if (again) again.focus(); };
+  document.querySelector('#rank-tbl tbody').addEventListener('click', e => { const tr = e.target.closest('tr.row'); if (tr) toggleRow(tr); });
+  document.querySelector('#rank-tbl tbody').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { const tr = e.target.closest('tr.row'); if (tr) { e.preventDefault(); toggleRow(tr); } } });
+  $('heat').addEventListener('click', e => { const th = e.target.closest('th'); if (!th) return; state.heatSort = th.dataset.h; renderHeat(); save(); });
+  ADD.filter(a => !a.retired).forEach(a => { $('use-'+a.id).addEventListener('change', e => { state.lab[a.key] = e.target.checked; renderLab(); save(); });
+    if (a.knob) $('kn-'+a.knob.id).addEventListener('input', e => { state.lab[a.knob.id] = +e.target.value; $('kv-'+a.knob.id).textContent = state.lab[a.knob.id]; soon(()=>{ renderLab(); save(); }); }); });
+  $('lab-more').addEventListener('click', () => { ui.labAll = !ui.labAll; renderLab(); });
+  document.querySelector('#lab-tbl thead').addEventListener('click', e => { const th=e.target.closest('th'); if (!th) return; const k=th.dataset.k; if (state.lab.sort===k) state.lab.dir*=-1; else { state.lab.sort=k; state.lab.dir=(k==='name'||k==='rk')?1:-1; } renderLab(); save(); });
+
+  $('d-archive').addEventListener('toggle', () => { if ($('d-archive').open && L) renderLab(); });
+  $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; d.scrollIntoView({ behavior:'smooth', block:'start' }); });
+  renderResults(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
+})();
+</script>

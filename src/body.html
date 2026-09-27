@@ -1,0 +1,216 @@
+
+<div class="wrap">
+  <header>
+    <span class="lab">2026 summer splits · LCK · LPL · LEC · LCS · CBLOL · LCP · fearless draft</span>
+    <h1>Fearless Draft Priority</h1>
+    <p class="sub">Which champions pro teams spend their picks and bans on first, across 775 games from the six Worlds leagues.</p>
+    <p class="dataline" id="dataline"></p>
+  </header>
+
+  <div class="bar">
+    <div class="frow"><span class="lab">League</span><div class="seg" id="seg-lg"></div><button class="linkbtn" id="lg-all">All</button></div>
+    <div class="frow"><span class="lab">Stage</span>
+      <div class="seg" id="seg-st"><button data-v="all">All</button><button data-v="0">Regular season</button><button data-v="1">Postseason</button></div>
+    </div>
+    <div class="frow"><span class="lab">Patch</span><div class="seg" id="seg-pt"></div></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-rankings" aria-controls="p-rankings" data-tab="rankings">Rankings</button>
+    <button role="tab" id="tab-leagues" aria-controls="p-leagues" data-tab="leagues">Leagues</button>
+    <button role="tab" id="tab-fearless" aria-controls="p-fearless" data-tab="fearless">Fearless</button>
+    <button role="tab" id="tab-evidence" aria-controls="p-evidence" data-tab="evidence">Evidence</button>
+    <button role="tab" id="tab-about" aria-controls="p-about" data-tab="about">About</button>
+  </div>
+
+  <!-- RANKINGS -->
+  <section class="panel" id="p-rankings" role="tabpanel" aria-labelledby="tab-rankings">
+    <div class="summary" id="summary"></div>
+    <div class="card">
+      <div class="card-hd"><h2>Top 20 by xPresence</h2>
+        <div class="legend"><span><i style="background:var(--accent)"></i>xPresence</span><span><i style="background:var(--accent-band)"></i>80% range</span><span><i style="background:var(--mix);width:9px;height:9px;transform:rotate(45deg)"></i>Patch-adjusted</span><span id="band-status" class="status"></span></div>
+      </div>
+      <p class="explain"><b>xPresence (expected presence)</b> is the chance a champion gets picked or banned in a fresh Game 1 draft. Regular presence just counts how often a champion was picked or banned. xPresence estimates that rate from every real pick and ban, giving credit each time a team took the champion while other options were still available. It adjusts for fearless, so a champion used earlier in a series isn't penalized for being unavailable later, and recent games count more: a game loses half its weight every 5 days. <b>Patch-adjusted</b> goes one step further and nudges champions changed in the patches since this data (16.18 and 16.19) up for each buff and down for each nerf.</p>
+      <div class="chart" id="chart"></div>
+      <p class="note">The shaded range shows how much the number moves when the series are resampled. Where two champions' ranges overlap, treat them as tied. On the right, gol.gg's PrioScore rank for comparison.</p>
+    </div>
+    <div class="card">
+      <div class="tbar"><h2>All champions</h2><div class="frow"><span class="lab">Role</span><div class="seg" id="seg-role"></div><label class="lab" for="q" style="margin-left:8px">Find</label><input type="search" id="q" placeholder="Champion"></div></div>
+      <p class="note">Click a row for its 80% range, win rate, how it was drafted, how teams use it across a series, and its rank in each league. Picking a role shows every champion played there at least 15% of the time this summer, so flex picks appear under each of their roles, and # becomes the rank within that role.</p>
+      <div class="tscroll"><table id="rank-tbl"><thead></thead><tbody></tbody></table></div>
+      <div class="more"><button id="more">Show all</button></div>
+    </div>
+  </section>
+
+  <!-- LEAGUES -->
+  <section class="panel" id="p-leagues" role="tabpanel" aria-labelledby="tab-leagues" hidden>
+    <div class="card">
+      <div class="card-hd"><h2>xPresence rank in each league</h2><span class="note">Each league scored on its own. Stage and patch filters apply; the league filter doesn't.</span></div>
+      <p class="note">Darker cells mean higher xPresence in that league. <span class="top5-key">Outlined</span> cells are that league's top 5. A dash means no team in that league picked or banned the champion. Click a league to sort by it.</p>
+      <div class="tscroll"><table id="heat"></table></div>
+    </div>
+  </section>
+
+  <!-- FEARLESS -->
+  <section class="panel" id="p-fearless" role="tabpanel" aria-labelledby="tab-fearless" hidden>
+    <div class="card">
+      <div class="card-hd"><h2>Burned early or held back</h2><span class="note">Champions picked in at least 15 multi-game series</span></div>
+      <p class="note">Under fearless, a champion can be played once per series. Across: xPresence. Down: the average game of the series in which the champion was first picked. Near the top, teams use it right away; lower down, they save it. Hover a dot for its numbers.</p>
+      <div class="chart" id="scatter"></div>
+    </div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <section class="panel" id="p-evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden>
+    <div class="card">
+      <div class="card-hd"><h2>Test results</h2><span class="note">Each test predicts real drafts the model never saw</span></div>
+      <p class="note">Every test builds xPresence from earlier games only, then scores how likely it found each real pick and ban, one draft action at a time, among the champions still available. "Gain" is how much more likely than gol.gg's PrioScore; higher is better.</p>
+      <div class="tscroll"><table class="bt" id="res-tbl"></table></div>
+      <p class="note" id="res-note"></p>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><h2>Are the percentages accurate?</h2><span class="note">Game 1s in all 31 rolling tests, 5-day half-life</span></div>
+      <div class="two">
+        <div class="chart" id="calib" style="overflow:visible"></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <p class="note">Each dot groups champions by what xPresence predicted going into a Game 1, then shows how often they were actually picked or banned. Dots on the dashed line mean the percentages can be taken at face value. Dot size shows how many champion-games are in the group.</p>
+          <ul class="plain" id="calib-notes" style="font-size:13px"></ul>
+        </div>
+      </div>
+    </div>
+
+    <details class="card fold" id="d-rolling">
+      <summary><h2>Rolling tests, 2025–2026</h2><span class="note">Every patch and international event, predicted from the 150 days before it</span></summary>
+      <p class="explain" id="roll-verdict"></p>
+      <div class="two">
+        <div>
+          <h3>Recency half-life</h3>
+          <p class="note">xPresence vs gol.gg's PrioScore, pooled over all tests. Current setting highlighted.</p>
+          <div class="tscroll"><table class="bt" id="roll-half" style="min-width:0"></table></div>
+        </div>
+        <div>
+          <h3>What else the tests showed</h3>
+          <ul class="plain" id="roll-notes" style="font-size:13px"></ul>
+        </div>
+      </div>
+      <h3>Every test</h3>
+      <p class="note">Bar: 10-day half-life (the setting until Sep 26). Dot: 5-day half-life (current). Right of zero means better than gol.gg.</p>
+      <div class="chart" id="roll-chart"></div>
+    </details>
+
+    <details class="card fold" id="d-msi">
+      <summary><h2>MSI rehearsal</h2><span class="note">Built from the spring splits only, then tested on MSI 2026</span></summary>
+      <p class="explain" id="msi-verdict"></p>
+      <div class="tscroll"><table class="bt" id="msi-bt"></table></div>
+      <div class="two">
+        <div><h3>xPresence top 10 going in</h3><p class="note">Where each finished in MSI presence (picks + bans ÷ games)</p><div class="kv" id="msi-pred" style="margin-top:6px"></div></div>
+        <div><h3>MSI's actual top 10</h3><p class="note">Where xPresence had them going in</p><div class="kv" id="msi-act" style="margin-top:6px"></div></div>
+      </div>
+      <p class="note" id="msi-note"></p>
+    </details>
+
+    <details class="card fold" id="d-patchadj">
+      <summary><h2>Patch-notes adjustment test</h2><span class="note">Does the size of a buff or nerf matter? 2026 patches 16.10–16.17 and MSI 2026</span></summary>
+      <p class="explain" id="pa-verdict"></p>
+      <div class="tscroll"><table class="bt" id="pa-tbl"></table></div>
+      <p class="note" id="pa-note"></p>
+    </details>
+
+    <details class="card fold" id="d-roles">
+      <summary><h2>Role-aware tests</h2><span class="note">Does knowing each champion's role help? Same 31 rolling tests</span></summary>
+      <p class="explain" id="role-verdict"></p>
+      <div class="two">
+        <div><h3>Champions taken per Game 1, by main role</h3><p class="note">Average over the Game 1s in all 31 tests. Each team drafts one of each role, so picks are fixed at 2 per role; the differences come from bans.</p><div class="tscroll"><table class="bt" id="role-bias" style="min-width:0"></table></div></div>
+        <div><h3>What was tested</h3><ul class="plain" id="role-notes" style="font-size:13px"></ul></div>
+      </div>
+    </details>
+
+    <details class="card fold archive" id="d-archive">
+      <summary><h2>Archive</h2><span class="note">Earlier models and retired add-ons, kept for the record</span></summary>
+      <p class="note">Nothing here feeds xPresence any more. The weighted score was the first version of this stat; its five add-ons were tested one by one, and three were retired on Sep 26.</p>
+
+      <div class="sub-card">
+        <div class="card-hd"><h3>Model check on the summer splits</h3><span class="note">The first test, run before the rolling tests</span></div>
+        <p class="note">Each model is built from early summer patches only, then asked to predict every real pick and ban on later patches. The number is how much more likely it found the real choices than gol.gg's PrioScore did.</p>
+        <div class="tscroll"><table class="bt" id="bt"></table></div>
+        <p class="note" id="bt-note"></p>
+      </div>
+
+      <div class="sub-card">
+        <div class="card-hd"><h3>Weighted-score lab</h3><span class="note">The hand-weighted score and its five add-ons</span></div>
+        <div class="addons" id="addons"></div>
+        <div class="tscroll"><table id="lab-tbl"><thead></thead><tbody></tbody></table></div>
+        <div class="more"><button id="lab-more">Show all</button></div>
+      </div>
+
+      <div class="sub-card">
+        <h3>Weighted-score action weights</h3>
+        <p class="note">FP = team with first pick, SP = the other team. In 2026 first pick is chosen separately from side.</p>
+        <table class="wt" style="max-width:420px"><tbody>
+          <tr><td>Phase 1 ban · FP1</td><td class="num">1.00</td></tr>
+          <tr><td>SP1 / SP2</td><td class="num">0.90</td></tr>
+          <tr><td>FP2 / FP3</td><td class="num">0.75</td></tr>
+          <tr><td>SP3</td><td class="num">0.60</td></tr>
+          <tr><td>Phase 2 ban</td><td class="num">0.50</td></tr>
+          <tr><td>SP4</td><td class="num">0.45</td></tr>
+          <tr><td>FP4 / FP5</td><td class="num">0.35</td></tr>
+          <tr><td>SP5 (last pick)</td><td class="num">0.25</td></tr>
+          <tr><td>Pick, order unknown</td><td class="num">0.63</td></tr>
+        </tbody></table>
+      </div>
+    </details>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="panel" id="p-about" role="tabpanel" aria-labelledby="tab-about" hidden>
+    <div class="card">
+      <h2>How xPresence works</h2>
+      <ul class="plain">
+        <li>Every pick or ban is a choice among the champions still legal at that moment: not banned, not already picked in the game, and not used earlier in the series.</li>
+        <li>A Plackett–Luce model fits one strength per champion that best explains all 15,000+ choices. Taking a champion while strong options remain counts for more than taking it from a thin pool, so draft order and fearless are built in without hand-set weights.</li>
+        <li>xPresence turns strength into a plain number: the share of 3,000 simulated fresh Game 1 drafts in which the champion is picked or banned.</li>
+        <li>Each game is weighted by recency: it loses half its weight every 5 days before the latest game. Until Sep 26 this was 10 days, with deciding games counted 1.5×; the rolling tests showed 5 days does better and deciding games make no difference.</li>
+        <li>Patch-adjusted multiplies a champion's strength by 1.25 for each buff and divides it by 1.25 for each nerf in patches released after the data (currently 16.18 and 16.19; the Worlds patch, 16.20, is due Oct 7). Champions no team drafted this summer have no strength to adjust, so a buff can't lift them onto the list. Unchanged champions shift slightly too, because a nerf to one champion frees up draft slots for everyone else.</li>
+        <li>The 80% range comes from refitting the model on 40 resamples of whole series.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><h2>Settings</h2><button class="linkbtn" id="reset-pl">Reset to defaults</button></div>
+      <p class="note">This changes xPresence on every tab. The default of 5 days comes from the rolling tests on the Evidence tab.</p>
+      <div class="two">
+        <div class="knob"><label for="kn-half" style="width:140px">Recency half-life</label><input type="range" id="kn-half" min="3" max="60" step="1"><span class="num" id="kv-half" style="width:48px"></span></div>
+        <p class="note">Deciding-game weighting was dropped on Sep 26: it had no measurable effect in 31 tests. Patch-notes adjustment: ×1.25 per buff, ÷1.25 per nerf.</p>
+      </div>
+    </div>
+
+    <div class="card snap">
+      <h2>Worlds baseline, frozen Sep 26 (5-day)</h2>
+      <p class="note">All six leagues, all 775 games, with the current settings: 5-day half-life, no deciding-game weight. Fixed so it can be checked against Worlds 2026 drafts after the final on Nov 14. The earlier 10-day version is kept in the page for the same comparison. The patch-adjusted list will be updated once when the Worlds patch notes (16.20) are out, before Worlds starts.</p>
+      <div class="two">
+        <div><span class="lab">xPresence</span><ol id="snap-pl"></ol></div>
+        <div><span class="lab">Patch-adjusted</span><ol id="snap-mix"></ol></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>About the data</h2>
+      <ul class="plain">
+        <li>775 games in 284 series from each league's post-MSI split: LCK Rounds 3–4, Play-In and Playoffs; LPL Split 3, Grand Finals and Regional Finals; LEC Summer and Summer Playoffs; LCS Summer and Playoffs; CBLOL Split 2 and Playoffs; LCP Split 3. LCP Split 3 playoffs weren't available yet. Play-ins, playoffs and regional finals count as postseason.</li>
+        <li>Source: Oracle's Elixir 2026 match data (Sep 26 file) for 762 games, with full pick order, first pick, side and bans. The other 13 come from gol.gg because Oracle's Elixir doesn't have them yet: the 12 LPL Regional Finals games and one LPL game (Team WE vs ThunderTalk, Aug 7, Game 3). One of those 13 has no pick order and gets the average weight.</li>
+        <li>Fearless holds in every league: no champion was picked twice in any series (see table).</li>
+        <li>Cross-checking gol.gg against Oracle's Elixir fixed: 56 games where gol.gg listed picks by role instead of draft order (most in LPL), 30 LPL games missing the first-pick marker, 2 picks with a blank champion, and the LCK Gen.G vs Dplus KIA series on Aug 1, where gol.gg's Game 1 was a copy of Game 2 with sides swapped (Oracle's Elixir has only Game 2, which is what's used). In one LPL game (NIP vs IG, Aug 22, Game 2) Oracle's Elixir listed picks as bans, so gol.gg's bans are kept.</li>
+        <li>gol.gg rank comes from rebuilding PrioScore with gol.gg's published rule (ban 1, pick rounds 1 / ½ / ⅓). Pick and ban counts match gol.gg; the rebuilt score lands within about 4 points of theirs.</li>
+      </ul>
+      <div class="tscroll"><table class="wt" style="min-width:520px"><thead><tr><th style="text-align:left">League</th><th>Series</th><th>Games</th><th>Most games in a series</th><th>Repeat picks in a series</th></tr></thead><tbody>
+        <tr><td>LCK</td><td class="num">53</td><td class="num">153</td><td class="num">5</td><td class="num">0</td></tr>
+        <tr><td>LPL</td><td class="num">85</td><td class="num">234</td><td class="num">5</td><td class="num">0</td></tr>
+        <tr><td>LEC</td><td class="num">53</td><td class="num">137</td><td class="num">5</td><td class="num">0</td></tr>
+        <tr><td>LCS</td><td class="num">34</td><td class="num">87</td><td class="num">5</td><td class="num">0</td></tr>
+        <tr><td>CBLOL</td><td class="num">34</td><td class="num">84</td><td class="num">4</td><td class="num">0</td></tr>
+        <tr><td>LCP</td><td class="num">25</td><td class="num">80</td><td class="num">5</td><td class="num">0</td></tr>
+      </tbody></table></div>
+    </div>
+  </section>
+</div>
