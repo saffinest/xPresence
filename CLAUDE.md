@@ -104,9 +104,22 @@ These are public, pre-registered predictions. Changing them after the fact defea
   - Every chart gets a "Show this chart as a table" toggle (`dataTable()` in `script.html`); hover tooltips alone don't count.
   - Clickable things are real `<button>`s: sort headers use `th()`, expandable rows use `.rowbtn`. Restore focus after a re-render.
   - VoiceOver reads a header button, not the header's `aria-sort`, so the sort state also goes in the button as hidden text (`sortedSR()`). Every sortable column toggles both directions.
-  - Opening a row with the keyboard moves focus into its details region so it gets read. Mouse clicks leave focus alone.
+  - Opening a row with the keyboard moves focus to a hidden one-sentence summary at the top of its details (`detailSummary()`, `.det-sum`). VoiceOver reads only the name of a focused region, but reads focused text in full. Mouse clicks leave focus alone.
   - Screen readers say "x Presence": `speak()` in `script.html` wraps every visible "xPresence" (including text added later) in a hidden spoken version. Just write "xPresence" as usual; for speech-only strings use `SAY`/`spoken()`.
   - Announce filter results through `live()` (the `#sr-live` region), not the visible status line.
+  - League names stay as written (CBLOL is spelled out by screen readers, like LCK and LPL). Don't add spoken respellings: a button's hidden name must match its visible label for Voice Control and WCAG, and braille displays would show the respelling. "x Presence" is the one exception.
+  - Testing: the owner checks changes with VoiceOver in Safari. Claude can't run VoiceOver; it checks the accessibility tree, keyboard behavior and contrast in a browser instead, so say which was done.
 - **Writing:** short, plain sentences in dashboard copy. Every new finding gets a row in the Evidence tab's results table plus a collapsible details section.
 - **Credit:** Oracle's Elixir (Tim Sevenhuysen), gol.gg and LoLalytics, in the footer and README. Not affiliated with Riot.
+- **Git:** `~/Downloads/xpresence` is a git checkout of https://github.com/saffinest/xPresence (branch `main`). Pushes authenticate through the GitHub CLI login (`gh auth setup-git` has been run). Pushing `main` updates the live site.
 - **Commits:** small commits with messages that say what changed on the page. Don't commit raw CSVs or large intermediate JSONs such as `all_games*.json`. `.gitignore` already covers `*.csv`, `analysis/all_games*.json` and `node_modules/`.
+
+## History
+
+- **Sep 26:** switched the half-life to 5 days; froze the Worlds baseline (`snapshot5.json`).
+- **Sep 27:**
+  - Linked the local folder to GitHub and added `.gitignore`.
+  - Committed the Demacia Cup baseline, `field_test.js`, the spring/MSI data, the `OE_DIR` change to the pipeline scripts and the README credit.
+  - Set `SITE_URL` so link previews use absolute URLs.
+  - Accessibility pass: chart data tables, screen-reader announcements, sort and row buttons, filter labels, 4.5:1 contrast in both themes, "x Presence" pronunciation, and a fix for sideways scrolling at 390px in Evidence and Leagues. The owner checked it with VoiceOver; three problems found that way were fixed (row details not read, stacked names in the chart tables, heatmap sort state not announced).
+  - Playwright isn't installed on this Mac; the page checks were run in the Claude Code in-app browser.
