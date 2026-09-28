@@ -15,6 +15,7 @@ const PADJ = /*PADJ*/;
 const CAL = /*CAL*/;
 const ROLES = /*ROLES*/;
 const ROLEX = /*ROLEX*/;
+const PRIOREC = /*PRIOREC*/; // PrioScore with the same recency weighting (analysis/prio_recency.js)
 (function(){
   const P = prepGames(D);
   const name = c => D.C[c];
@@ -300,6 +301,8 @@ onmessage = e => {
       ['grp','Against gol.gg’s PrioScore'],
       { t:'Domestic patches, 2025–2026', sub:'six leagues, rolling', n:ROLL.domTests, won:`${h5.domBeats} of ${ROLL.domTests}`, gain:f(h5.dom), d:'d-rolling' },
       { t:'International events, 2025–2026', sub:'First Stand, MSI, Worlds', n:ROLL.intlTests, won:`${h5.intlBeats} of ${ROLL.intlTests}`, gain:f(h5.intl), d:'d-rolling' },
+      (() => { const d = PRX.domestic, i = PRX.international;
+        return { t:'Against PrioScore with recency', sub:'PrioScore given the same 5-day weighting', n:d.tests+i.tests, won:`${d.beats+i.beats} of ${d.tests+i.tests}`, gain:`${f(d.gain)} <span class="muted">domestic,</span> ${f(i.gain)} <span class="muted">international</span>`, d:'d-priorec' }; })(),
       { t:'MSI 2026 rehearsal', sub:'spring data only, 10-day setting', n:1, won:'1 of 1', gain:`${f(m.vsGol)} <span class="muted">(${(m.lo*100).toFixed(0)} to ${(m.hi*100).toFixed(0)}%)</span>`, d:'d-msi' },
       { t:'Summer splits', sub:'first check, 21-day recency', n:BT.length, won:`${BT.filter(o=>rel(o)>0).length} of ${BT.length}`, gain:BT.map(o=>f(rel(o))).join(', '), d:'d-archive' },
       ['grp','Add-ons, against the same model without them'],
@@ -313,6 +316,26 @@ onmessage = e => {
       rows.map(r => Array.isArray(r) ? `<tr class="grp"><td colspan="5">${r[1]}</td></tr>` :
         `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}" aria-label="Details: ${r.t}">Details</button></td></tr>`).join('') + '</tbody>';
     $('res-note').textContent = `Headline: xPresence beat gol.gg in ${h5.domBeats + h5.intlBeats} of ${ROLL.domTests + ROLL.intlTests} rolling tests across ${ROLL.games.toLocaleString()} games at the current 5-day setting. Almost all of the gain comes from weighting recent games; without it, xPresence roughly ties gol.gg.`;
+  }
+  // xPresence against recency-weighted PrioScore; scored with beta = 1 like the rolling tests above
+  const PRX = { domestic: PRIOREC.xpVsRecencyPrio.domestic.xp5_b1, international: PRIOREC.xpVsRecencyPrio.international.xp5_b1 };
+  function renderPrioRec(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%', M = PRIOREC.models, d = M.domestic, i = M.international;
+    const loo = PRIOREC.looChoices, hs = [...new Set([...loo.domestic.gol, ...loo.international.gol])];
+    const fit = PRIOREC.xpVsRecencyPrio;
+    const n = x => x.beats === x.tests ? `all ${x.tests}` : `${x.beats} of ${x.tests}`;
+    $('pr-verdict').innerHTML = `<b>Most of the gain over PrioScore comes from counting recent games more; the model adds another ${f(PRX.domestic.gain)} on top (${f(PRX.international.gain)} at international events).</b> Giving gol.gg's PrioScore the same weighting xPresence uses (each game loses half its weight every 5 days) makes it ${f(d.gol_loo.gain)} better domestically and ${f(i.gol_loo.gain)} better internationally. xPresence is ${f(d.xp5_b1.gain)} and ${f(i.xp5_b1.gain)} better than plain PrioScore. It beat recency-weighted PrioScore on ${n(PRX.domestic)} patches and ${n(PRX.international)} international events.`;
+    const row = (lab, g, p, hl) => `<tr class="${hl?'hl':''}"><td>${lab}</td><td class="num">${g==null?'–':f(d[g].gain)}</td><td class="num">${g==null?'–':f(i[g].gain)}</td><td class="num">${p==null?'–':f(d[p].gain)}</td><td class="num">${p==null?'–':f(i[p].gain)}</td></tr>`;
+    $('pr-tbl').innerHTML = `<thead><tr><th>Half-life</th><th>PrioScore<span class="h2">domestic</span></th><th>PrioScore<span class="h2">international</span></th><th>Presence<span class="h2">domestic</span></th><th>Presence<span class="h2">international</span></th></tr></thead><tbody>` +
+      `<tr><td>No recency</td><td class="num">${f(0)}</td><td class="num">${f(0)}</td><td class="num">${f(d.presence.gain)}</td><td class="num">${f(i.presence.gain)}</td></tr>` +
+      PRIOREC.halfs.map(h => row(h + ' days' + (h===5 ? ' (xPresence\'s setting)' : ''), 'gol_h'+h, 'pres_h'+h, h===5)).join('') + '</tbody>';
+    $('pr-notes').innerHTML = [
+      `PrioScore's half-life was picked fairly: for each test, the one that did best on the other ${PRX.domestic.tests + PRX.international.tests - 1} tests. It chose ${hs.join(' or ')} days every time, the same as xPresence.`,
+      `Even against PrioScore at whichever half-life suits it best in hindsight, xPresence is ${f(fit.domestic.xp5_b1.gainVsBestFixed)} better domestically and ${f(fit.international.xp5_b1.gainVsBestFixed)} internationally.`,
+      `Presence (picks + bans ÷ games) with the same weighting does almost as well as weighted PrioScore (${f(d.pres_h5.gain)} and ${f(i.pres_h5.gain)} at 5 days), so PrioScore's pick-order weights add little once recent games count more.`,
+      `Scoring: xPresence's percentages are used as they are. PrioScore and presence aren't percentages, so each gets a scale fitted on the last 30 days of training, as in every other test. If xPresence gets that fitting step too, it adds ${f(fit.domestic.xp5.gain)} domestically and ${f(fit.international.xp5.gain)} internationally.`,
+      `This test runs xPresence as it is today, without the deciding-game weight dropped on Sep 26, so it scores ${f(d.xp5_b1.gain)} here against ${f(ROLL.half.find(x=>x.h===5).dom)} in the rolling tests above.`
+    ].map(t=>`<li>${t}</li>`).join('');
   }
   function renderRoles(){
     const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%', X = ROLEX;
@@ -511,6 +534,6 @@ onmessage = e => {
   $('d-archive').addEventListener('toggle', () => { if ($('d-archive').open && L) renderLab(); });
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; const sm = d.querySelector('summary'); sm.focus({ preventScroll:true }); d.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block:'start' }); });
-  renderResults(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
+  renderResults(); renderPrioRec(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
 })();
 </script>

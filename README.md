@@ -35,8 +35,10 @@ Every test builds xPresence from earlier games only, then scores how likely it f
 | Domestic patches, 2025–2026 (six leagues, 150-day rolling window) | 26 | 25 | +34.8% |
 | International events: First Stand, MSI and Worlds 2025; First Stand and MSI 2026 | 5 | 5 | +32.4% |
 | MSI 2026 rehearsal (spring data only) | 1 | 1 | +17.9% (90% range +14% to +22%) |
+| Against PrioScore given the same 5-day recency weighting (same 31 rolling tests) | 31 | 28 | +6.0% domestic, +8.2% international |
 
 - **Recency is almost the whole edge.** Without it, xPresence roughly ties PrioScore.
+  - Giving PrioScore the same recency weighting makes it +26.8% better domestically and +22.2% better internationally. xPresence adds another +6.0% and +8.2% on top, winning 23 of 26 patches and all 5 international events (`analysis/prio_recency.js`).
 - **Accuracy.** Across the Game 1s in all 31 tests, predicted percentages track what happened.
   - Domestically, champions rated 90%+ were taken 90% of the time.
   - At international events they were taken 81% of the time, based on only 193 cases. This is being watched at Worlds 2026.

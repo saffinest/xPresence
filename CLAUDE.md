@@ -57,11 +57,14 @@ Read this first. It carries the project's decisions and history from earlier ses
 
 ## Tests (`analysis/`, results in `data/`)
 
+- **Tools:** Node (`brew install node`) and pandas (`pip install --user pandas`) were installed Sep 27. Homebrew lives in `/opt/homebrew/bin`, which isn't on the PATH of Claude's shell, so call `/opt/homebrew/bin/node` there.
 - **Pipeline:** run `export_all.py`, which writes `all_games.json` (5,105 games, 2025–2026), then `roles.py`, which writes `all_games_roles.json`. Then run the `.js` tests with Node from inside `analysis/`. Copy any inputs they need (e.g. `data/data_spring_msi.json`, `notes.json`, `wr_shift.json`) there first.
 - **Scoring metric:** for each draft action, the likelihood of the real choice among available champions, using softmax(β·log score) with β fitted on recent training games. Results are reported relative to gol.gg's PrioScore, rebuilt from its published rule (ban 1; pick rounds 1, ½, ⅓).
 - **Key results at the current settings:**
   - Rolling tests (`rolling2.js`, a 150-day window before each test): 26 domestic patches, +34.8% vs PrioScore, won 25. Five international events, +32.4%, won 5.
   - Recency is almost the whole edge; without it, xPresence roughly ties PrioScore.
+  - Recency-weighted PrioScore (`prio_recency.js`, same 31 tests): PrioScore with the same weighting, half-life picked leave-one-out (it chose 5 days every time), gains +26.8% domestic and +22.2% international over plain PrioScore. xPresence adds +6.0% domestic (won 23 of 26) and +8.2% international (5 of 5) on top. Presence with the same weighting does nearly as well as weighted PrioScore (+25.7%, +21.9%).
+  - Scoring detail: the site scores xPresence with β = 1 (its own probabilities); PrioScore and presence get β fitted on the last 30 days of training. With fitted β for xPresence too, the gain over recency-weighted PrioScore is +4.6% domestic (23 of 26) and +3.5% international (4 of 5). The published +34.8% / +32.4% is `rolling2.json`'s `pl_h5.ll1`, which still counted deciding games 1.5×; today's model gives +34.4% / +32.2%.
   - MSI 2026 rehearsal (spring data only): +17.9% (90% range +14% to +22%).
 - **Calibration** (`calib5.js`): domestic results are accurate. Internationally the top runs high: champions rated 90%+ were taken 81% of the time (n=193).
 - **Patch-notes sizing** (`adjust_gap.js`): size tiers and win-rate shifts did not beat flat ×1.25 (+0.37% when 2–3 patches behind).
@@ -124,3 +127,5 @@ These are public, pre-registered predictions. Changing them after the fact defea
   - Set `SITE_URL` so link previews use absolute URLs.
   - Accessibility pass: chart data tables, screen-reader announcements, sort and row buttons, filter labels, 4.5:1 contrast in both themes, "x Presence" pronunciation, and a fix for sideways scrolling at 390px in Evidence and Leagues. The owner checked it with VoiceOver; three problems found that way were fixed (row details not read, stacked names in the chart tables, heatmap sort state not announced).
   - Playwright isn't installed on this Mac; the page checks were run in the Claude Code in-app browser.
+  - Commit identity set to saffirephire with the noreply email; the 14 earlier commits were rewritten to match and force-pushed (the Demacia freeze commit is now `b3672ad`, date unchanged).
+  - Added the "Is it just recency?" test: PrioScore with the same recency weighting (`analysis/prio_recency.js`, `data/prio_recency.json`), a results-table row and a details section on the Evidence tab. The owner chose to score xPresence with β = 1 there, to match the rest of the page.

@@ -105,6 +105,15 @@
       <details class="chart-data" id="roll-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="roll-tbl" aria-label="Rolling tests, every test"></table></div></details>
     </details>
 
+    <details class="card fold" id="d-priorec">
+      <summary><h2>Is it just recency?</h2><span class="note">gol.gg's PrioScore given the same recency weighting, on the same 31 rolling tests</span></summary>
+      <p class="explain" id="pr-verdict"></p>
+      <h3>Gain over plain PrioScore, by half-life</h3>
+      <p class="note">Each game loses half its weight every so many days before the latest game. Pooled over all tests, per draft action; higher is better. xPresence's setting highlighted.</p>
+      <div class="tscroll"><table class="bt" id="pr-tbl" aria-label="PrioScore and presence with recency, by half-life"></table></div>
+      <ul class="plain" id="pr-notes" style="font-size:13px"></ul>
+    </details>
+
     <details class="card fold" id="d-msi">
       <summary><h2>MSI rehearsal</h2><span class="note">Built from the spring splits only, then tested on MSI 2026</span></summary>
       <p class="explain" id="msi-verdict"></p>

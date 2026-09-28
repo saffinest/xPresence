@@ -17,6 +17,7 @@ rep = {'/*DATA*/': 'data3.json', '/*SNAP*/': 'snapshot5.json', '/*SNAPPREV*/': '
        '/*CAL*/': 'calib5.json', '/*ROLES*/': 'roles_summer.json', '/*ROLEX*/': 'role_dash.json'}
 vals = {k: rd('data', v).strip() for k, v in rep.items()}
 vals['/*BACKTEST*/'] = json.dumps(bt, ensure_ascii=False)
+vals['/*PRIOREC*/'] = json.dumps(json.loads(rd('data', 'prio_recency.json'))['summary'])   # summary only; per-test scores stay in data/
 vals['/*ENGINE*/'] = rd('src', 'engine.js')
 shell = rd('src', 'shell.html')   # doctype, meta tags and footer, with {{...}} slots
 img = (SITE_URL.rstrip('/') + '/og.png') if SITE_URL else 'og.png'
