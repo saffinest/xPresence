@@ -1,7 +1,7 @@
 # Rebuilds index.html from src/ and data/.  Usage: python3 build.py
 import json, os
 AUTHOR   = "@saffirephire"
-SITE_URL = ""          # e.g. "https://yourname.github.io/xpresence/"
+SITE_URL = "https://saffinest.github.io/xPresence/"
 UPDATED  = "Sep 26, 2026"
 
 H = os.path.dirname(os.path.abspath(__file__))
