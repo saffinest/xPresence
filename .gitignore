@@ -1,0 +1,13 @@
+# Raw Oracle's Elixir CSVs (~75 MB each; not ours to redistribute)
+*.csv
+
+# Large intermediate JSONs from the analysis pipeline
+analysis/all_games*.json
+
+# Node
+node_modules/
+
+# OS / editor / Python cruft
+.DS_Store
+__pycache__/
+*.pyc
