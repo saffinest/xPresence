@@ -1,5 +1,7 @@
 # CLAUDE.md: xPresence / Fearless Draft Priority
 
+**Site:** https://saffinest.github.io/xPresence/
+
 Read this first. It carries the project's decisions and history from earlier sessions.
 
 ## What this is
@@ -18,7 +20,7 @@ Read this first. It carries the project's decisions and history from earlier ses
   - `src/head.html` holds the CSS tokens (light and dark). `src/body.html` is the markup; `src/script.html` is the dashboard logic.
   - `src/engine.js` is the model. It's inlined into the page as `<script id="engine">`, and the web worker is built from that script's text.
   - `build.py` swaps placeholders such as `/*DATA*/` and `/*ROLL*/` for files in `data/`, and asserts that each placeholder exists.
-  - Settings at the top of `build.py`: `AUTHOR`, `SITE_URL` (empty until the Pages URL is known; set it so `og:image` is absolute) and `UPDATED`.
+  - Settings at the top of `build.py`: `AUTHOR`, `SITE_URL` (the Pages URL; it makes `og:image` absolute) and `UPDATED`.
 - **After any change,** load the page headlessly (for example Playwright with Chromium) and do three things:
   - click every tab and check the console for errors;
   - change a league filter, wait for "Range from 40 resamples", and confirm the worker ran;
@@ -99,4 +101,4 @@ These are public, pre-registered predictions. Changing them after the fact defea
 - **Naming:** the stat is **xPresence**. It's compared with "gol.gg's PrioScore", and results read "+x% vs gol.gg".
 - **Writing:** short, plain sentences in dashboard copy. Every new finding gets a row in the Evidence tab's results table plus a collapsible details section.
 - **Credit:** Oracle's Elixir (Tim Sevenhuysen), gol.gg and LoLalytics, in the footer and README. Not affiliated with Riot.
-- **Commits:** small commits with messages that say what changed on the page. Don't commit raw CSVs or large intermediate JSONs such as `all_games*.json`. A good early task is adding a `.gitignore` for `*.csv`, `analysis/all_games*.json` and `node_modules/`; it wasn't included in the first upload because Finder hides dotfiles.
+- **Commits:** small commits with messages that say what changed on the page. Don't commit raw CSVs or large intermediate JSONs such as `all_games*.json`. `.gitignore` already covers `*.csv`, `analysis/all_games*.json` and `node_modules/`.
