@@ -1,10 +1,12 @@
+import os
+OE_DIR=os.path.expanduser(os.environ.get('OE_DIR','~/Downloads'))  # folder holding the Oracle's Elixir CSVs
 import pandas as pd, json, re, datetime as dt, collections
 norm=lambda s: re.sub(r'[^a-z0-9]','',str(s).lower())
 L25={'LCK','LPL','LEC','LTA','LTA N','LTA S','LCP','FST','MSI','WLDs'}
 L26={'LCK','LPL','LEC','LCS','CBLOL','LCP','FST','MSI'}
 cols=['gameid','datacompleteness','league','year','split','playoffs','date','game','patch','side','position','teamname','firstPick','ban1','ban2','ban3','ban4','ban5','pick1','pick2','pick3','pick4','pick5','result']
 frames=[]
-for f,L in [('/mnt/user-data/uploads/Downloads/2025_LoL_esports_match_data_from_OraclesElixir.csv',L25),('/mnt/user-data/uploads/Downloads/2026_LoL_esports_match_data_from_OraclesElixir.csv',L26)]:
+for f,L in [(os.path.join(OE_DIR,'2025_LoL_esports_match_data_from_OraclesElixir.csv'),L25),(os.path.join(OE_DIR,'2026_LoL_esports_match_data_from_OraclesElixir.csv'),L26)]:
     d=pd.read_csv(f,usecols=cols,low_memory=False); d=d[(d.position=='team')&(d.league.isin(L))]; frames.append(d)
 t=pd.concat(frames); t['ts']=pd.to_datetime(t.date)
 # patch order: sort distinct (year, patch float) by median date

@@ -1,7 +1,9 @@
+import os
+OE_DIR=os.path.expanduser(os.environ.get('OE_DIR','~/Downloads'))  # folder holding the Oracle's Elixir CSVs
 import csv, json
 R={}
 for y in (2025,2026):
-    with open(f'/mnt/user-data/uploads/Downloads/{y}_LoL_esports_match_data_from_OraclesElixir.csv',newline='',encoding='utf-8') as f:
+    with open(os.path.join(OE_DIR,f'{y}_LoL_esports_match_data_from_OraclesElixir.csv'),newline='',encoding='utf-8') as f:
         for r in csv.DictReader(f):
             if r['position'] in ('top','jng','mid','bot','sup'):
                 R.setdefault(r['gameid'],{})[r['champion']]=r['position']
