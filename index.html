@@ -20,9 +20,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{
-  --bg:#F2F4F7; --surface:#FFFFFF; --sunk:#E9EDF2; --ink:#141A24; --muted:#5A6475; --faint:#8A93A3; --line:#D9DFE7;
+  --bg:#F2F4F7; --surface:#FFFFFF; --sunk:#E9EDF2; --ink:#141A24; --muted:#4F5869; --faint:#616A7B; --line:#D9DFE7;
   --accent:#2456C8; --accent-soft:#DCE6FB; --accent-band:rgba(36,86,200,.18); --mix:#B8661F; --mix-soft:#F6E6D6;
-  --up:#1D8052; --down:#B83A2E; --on-accent:#FFFFFF;
+  --up:#18754A; --down:#B83A2E; --on-accent:#FFFFFF; --heat-max:75%;
   --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --cond:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -30,14 +30,14 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --bg:#0E1218; --surface:#161B24; --sunk:#1D2430; --ink:#E5E9F0; --muted:#9AA4B5; --faint:#6D7788; --line:#28303D;
-    --accent:#7AA2FF; --accent-soft:#1E2B48; --accent-band:rgba(122,162,255,.22); --mix:#E4A15E; --mix-soft:#3A2A1A; --up:#4CC38A; --down:#F07D70; --on-accent:#0E1218;
+    --bg:#0E1218; --surface:#161B24; --sunk:#1D2430; --ink:#E5E9F0; --muted:#A7B0C0; --faint:#8790A1; --line:#28303D;
+    --accent:#7AA2FF; --accent-soft:#1E2B48; --accent-band:rgba(122,162,255,.22); --mix:#E4A15E; --mix-soft:#3A2A1A; --up:#4CC38A; --down:#F07D70; --on-accent:#0E1218; --heat-max:55%;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#0E1218; --surface:#161B24; --sunk:#1D2430; --ink:#E5E9F0; --muted:#9AA4B5; --faint:#6D7788; --line:#28303D;
-  --accent:#7AA2FF; --accent-soft:#1E2B48; --accent-band:rgba(122,162,255,.22); --mix:#E4A15E; --mix-soft:#3A2A1A; --up:#4CC38A; --down:#F07D70; --on-accent:#0E1218;
+  --bg:#0E1218; --surface:#161B24; --sunk:#1D2430; --ink:#E5E9F0; --muted:#A7B0C0; --faint:#8790A1; --line:#28303D;
+  --accent:#7AA2FF; --accent-soft:#1E2B48; --accent-band:rgba(122,162,255,.22); --mix:#E4A15E; --mix-soft:#3A2A1A; --up:#4CC38A; --down:#F07D70; --on-accent:#0E1218; --heat-max:55%;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -54,7 +54,10 @@ p{margin:0;max-width:72ch}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 header{display:flex;flex-direction:column;gap:6px}
 header .sub{color:var(--muted);font-size:15px}
-button:focus-visible,input:focus-visible,th:focus-visible,tr:focus-visible,[role=tab]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:focus-visible,input:focus-visible,summary:focus-visible,[role=tab]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+main{display:flex;flex-direction:column;gap:20px}
+.xp .sr-only{user-select:none}
 
 /* filters + tabs */
 .bar{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
@@ -87,12 +90,14 @@ button:focus-visible,input:focus-visible,th:focus-visible,tr:focus-visible,[role
 .legend i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
 
 /* tables */
-.tscroll{overflow-x:auto}
+.tscroll{overflow-x:auto;position:relative}
 table{border-collapse:collapse;width:100%}
 th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
 th{font-family:var(--cond);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--sunk);cursor:pointer;user-select:none}
-th .h2{display:block;font-size:10.5px;letter-spacing:.02em;text-transform:none;font-weight:500;color:var(--faint)}
-th[aria-sort="descending"]::after{content:" ▾"} th[aria-sort="ascending"]::after{content:" ▴"}
+th .h2{display:block;font-size:10.5px;letter-spacing:.02em;text-transform:none;font-weight:500;color:var(--muted)}
+th .sortbtn{font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer}
+tbody th{background:none;font:500 13px var(--sans);letter-spacing:normal;text-transform:none;color:var(--ink);cursor:default;text-align:left;user-select:auto}
+th[aria-sort="descending"] .sortbtn::after{content:" ▾";content:" ▾" / ""} th[aria-sort="ascending"] .sortbtn::after{content:" ▴";content:" ▴" / ""}
 td{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
 td.name,th.name{text-align:left;font-family:var(--sans);font-weight:500}
 td.rk{color:var(--faint);width:34px}
@@ -100,8 +105,9 @@ td.rl,th[data-k=role]{text-align:left;font-family:var(--sans);font-size:13px}
 #rank-tbl{min-width:620px}
 #rank-tbl tbody tr.row{cursor:pointer}
 #rank-tbl tbody tr.row:hover td{background:var(--sunk)}
-#rank-tbl tbody tr.row td.name::after{content:" ›";color:var(--faint)}
-#rank-tbl tbody tr.row[aria-expanded="true"] td.name::after{content:" ⌄"}
+.rowbtn{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:left}
+.rowbtn .chev{color:var(--faint)}
+.det:focus-within{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 td.pri{font-weight:500}
 .pbar{display:inline-block;height:6px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-right:8px}
 .d-up{color:var(--up)} .d-dn{color:var(--down)}
@@ -130,7 +136,8 @@ tr.detail td{background:var(--bg);white-space:normal;text-align:left;font-family
 .addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .addon{border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
 .addon.on{border-color:var(--mix);background:var(--mix-soft)}
-.addon.retired{opacity:.7}
+.addon.retired{border-style:dashed}
+.addon.retired label.tog{color:var(--muted)}
 .addon.retired label.tog{cursor:default}
 .addon label.tog{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-family:var(--cond);font-weight:600;font-size:15px;cursor:pointer}
 .addon input[type=checkbox]{accent-color:var(--mix);width:16px;height:16px}
@@ -139,9 +146,9 @@ tr.detail td{background:var(--bg);white-space:normal;text-align:left;font-family
 .knob input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}
 .addon .knob input[type=range]{accent-color:var(--mix)}
 .badge{display:inline-block;font:600 10.5px var(--cond);letter-spacing:.08em;text-transform:uppercase;border-radius:4px;padding:1px 6px;border:1px solid currentColor}
-.b-help{color:var(--up)} .b-hurt{color:var(--down)} .b-mixed{color:var(--faint)}
+.b-help{color:var(--up)} .b-hurt{color:var(--down)} .b-mixed{color:var(--muted)}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
-@media (max-width:820px){.two{grid-template-columns:1fr}}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
 #lab-tbl{min-width:900px}
 th.grp-add{background:var(--mix-soft)}
 .bt{min-width:560px}
@@ -159,7 +166,7 @@ details.fold{display:block}
 details.fold > * + *{margin-top:12px}
 details.fold > summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
 details.fold > summary::-webkit-details-marker{display:none}
-details.fold > summary h2::before{content:"›";display:inline-block;width:16px;color:var(--faint);transition:transform .15s}
+details.fold > summary h2::before{content:"›";content:"›" / "";display:inline-block;width:16px;color:var(--faint);transition:transform .15s}
 details.fold[open] > summary h2::before{transform:rotate(90deg)}
 details.fold > summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 details.archive{background:var(--bg);border-style:dashed}
@@ -171,6 +178,13 @@ details.archive{background:var(--bg);border-style:dashed}
 .top5-key{box-shadow:inset 0 0 0 2px var(--mix);padding:0 4px;border-radius:2px}
 @media (prefers-reduced-motion: no-preference){ .fade{transition:opacity .15s} }
 .stale{opacity:.55}
+details.chart-data{font-size:12.5px}
+details.chart-data > summary{cursor:pointer;color:var(--accent);width:max-content;max-width:100%}
+details.chart-data .tscroll{margin-top:8px;max-height:360px;overflow:auto}
+details.chart-data table{min-width:0}
+details.chart-data th{cursor:default}
+details.chart-data thead th{position:sticky;top:0;z-index:1}
+details.chart-data td:first-child,details.chart-data th:first-child{text-align:left;font-family:var(--sans)}
 </style>
 
 <style>
@@ -189,12 +203,14 @@ details.archive{background:var(--bg);border-style:dashed}
     <p class="dataline" id="dataline"></p>
   </header>
 
+  <main>
+  <p id="sr-live" class="sr-only" role="status"></p>
   <div class="bar">
-    <div class="frow"><span class="lab">League</span><div class="seg" id="seg-lg"></div><button class="linkbtn" id="lg-all">All</button></div>
-    <div class="frow"><span class="lab">Stage</span>
+    <div class="frow" role="group" aria-labelledby="lab-lg"><span class="lab" id="lab-lg">League</span><div class="seg" id="seg-lg"></div><button class="linkbtn" id="lg-all" aria-label="All leagues">All</button></div>
+    <div class="frow" role="group" aria-labelledby="lab-st"><span class="lab" id="lab-st">Stage</span>
       <div class="seg" id="seg-st"><button data-v="all">All</button><button data-v="0">Regular season</button><button data-v="1">Postseason</button></div>
     </div>
-    <div class="frow"><span class="lab">Patch</span><div class="seg" id="seg-pt"></div></div>
+    <div class="frow" role="group" aria-labelledby="lab-pt"><span class="lab" id="lab-pt">Patch</span><div class="seg" id="seg-pt"></div></div>
   </div>
 
   <div class="tabs" role="tablist">
@@ -214,12 +230,13 @@ details.archive{background:var(--bg);border-style:dashed}
       </div>
       <p class="explain"><b>xPresence (expected presence)</b> is the chance a champion gets picked or banned in a fresh Game 1 draft. Regular presence just counts how often a champion was picked or banned. xPresence estimates that rate from every real pick and ban, giving credit each time a team took the champion while other options were still available. It adjusts for fearless, so a champion used earlier in a series isn't penalized for being unavailable later, and recent games count more: a game loses half its weight every 5 days. <b>Patch-adjusted</b> goes one step further and nudges champions changed in the patches since this data (16.18 and 16.19) up for each buff and down for each nerf.</p>
       <div class="chart" id="chart"></div>
+      <details class="chart-data" id="chart-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="chart-tbl" aria-label="Top 20 by xPresence"></table></div></details>
       <p class="note">The shaded range shows how much the number moves when the series are resampled. Where two champions' ranges overlap, treat them as tied. On the right, gol.gg's PrioScore rank for comparison.</p>
     </div>
     <div class="card">
-      <div class="tbar"><h2>All champions</h2><div class="frow"><span class="lab">Role</span><div class="seg" id="seg-role"></div><label class="lab" for="q" style="margin-left:8px">Find</label><input type="search" id="q" placeholder="Champion"></div></div>
+      <div class="tbar"><h2>All champions</h2><div class="frow"><div class="frow" role="group" aria-labelledby="lab-role"><span class="lab" id="lab-role">Role</span><div class="seg" id="seg-role"></div></div><label class="lab" for="q" style="margin-left:8px">Find</label><input type="search" id="q" placeholder="Champion"></div></div>
       <p class="note">Click a row for its 80% range, win rate, how it was drafted, how teams use it across a series, and its rank in each league. Picking a role shows every champion played there at least 15% of the time this summer, so flex picks appear under each of their roles, and # becomes the rank within that role.</p>
-      <div class="tscroll"><table id="rank-tbl"><thead></thead><tbody></tbody></table></div>
+      <div class="tscroll"><table id="rank-tbl" aria-label="All champions"><thead></thead><tbody></tbody></table></div>
       <div class="more"><button id="more">Show all</button></div>
     </div>
   </section>
@@ -229,7 +246,7 @@ details.archive{background:var(--bg);border-style:dashed}
     <div class="card">
       <div class="card-hd"><h2>xPresence rank in each league</h2><span class="note">Each league scored on its own. Stage and patch filters apply; the league filter doesn't.</span></div>
       <p class="note">Darker cells mean higher xPresence in that league. <span class="top5-key">Outlined</span> cells are that league's top 5. A dash means no team in that league picked or banned the champion. Click a league to sort by it.</p>
-      <div class="tscroll"><table id="heat"></table></div>
+      <div class="tscroll"><table id="heat" aria-label="xPresence rank in each league"></table></div>
     </div>
   </section>
 
@@ -239,6 +256,7 @@ details.archive{background:var(--bg);border-style:dashed}
       <div class="card-hd"><h2>Burned early or held back</h2><span class="note">Champions picked in at least 15 multi-game series</span></div>
       <p class="note">Under fearless, a champion can be played once per series. Across: xPresence. Down: the average game of the series in which the champion was first picked. Near the top, teams use it right away; lower down, they save it. Hover a dot for its numbers.</p>
       <div class="chart" id="scatter"></div>
+      <details class="chart-data" id="scatter-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="scatter-tbl" aria-label="Burned early or held back, every champion"></table></div></details>
     </div>
   </section>
 
@@ -247,7 +265,7 @@ details.archive{background:var(--bg);border-style:dashed}
     <div class="card">
       <div class="card-hd"><h2>Test results</h2><span class="note">Each test predicts real drafts the model never saw</span></div>
       <p class="note">Every test builds xPresence from earlier games only, then scores how likely it found each real pick and ban, one draft action at a time, among the champions still available. "Gain" is how much more likely than gol.gg's PrioScore; higher is better.</p>
-      <div class="tscroll"><table class="bt" id="res-tbl"></table></div>
+      <div class="tscroll"><table class="bt" id="res-tbl" aria-label="Test results"></table></div>
       <p class="note" id="res-note"></p>
     </div>
 
@@ -260,6 +278,7 @@ details.archive{background:var(--bg);border-style:dashed}
           <ul class="plain" id="calib-notes" style="font-size:13px"></ul>
         </div>
       </div>
+      <details class="chart-data" id="calib-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="calib-tbl" aria-label="Are the percentages accurate, by group"></table></div></details>
     </div>
 
     <details class="card fold" id="d-rolling">
@@ -279,6 +298,7 @@ details.archive{background:var(--bg);border-style:dashed}
       <h3>Every test</h3>
       <p class="note">Bar: 10-day half-life (the setting until Sep 26). Dot: 5-day half-life (current). Right of zero means better than gol.gg.</p>
       <div class="chart" id="roll-chart"></div>
+      <details class="chart-data" id="roll-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="roll-tbl" aria-label="Rolling tests, every test"></table></div></details>
     </details>
 
     <details class="card fold" id="d-msi">
@@ -322,7 +342,7 @@ details.archive{background:var(--bg);border-style:dashed}
       <div class="sub-card">
         <div class="card-hd"><h3>Weighted-score lab</h3><span class="note">The hand-weighted score and its five add-ons</span></div>
         <div class="addons" id="addons"></div>
-        <div class="tscroll"><table id="lab-tbl"><thead></thead><tbody></tbody></table></div>
+        <div class="tscroll"><table id="lab-tbl" aria-label="Weighted-score lab"><thead></thead><tbody></tbody></table></div>
         <div class="more"><button id="lab-more">Show all</button></div>
       </div>
 
@@ -395,6 +415,7 @@ details.archive{background:var(--bg);border-style:dashed}
       </tbody></table></div>
     </div>
   </section>
+  </main>
 
   <footer class="site-foot">
     <p>Made by @saffirephire. Updated Sep 26, 2026. <span id="repo-link"></span></p>
@@ -744,7 +765,7 @@ const ROLEX = {"tests":31,"draft":{"gain":0.4062,"soft":0.3282,"lam9":0.4827,"pi
   const name = c => D.C[c];
   const pct = (x, d=1) => (x*100).toFixed(d);
   const $ = id => document.getElementById(id);
-  const DEF = { lgs:[0,1,2,3,4,5], st:'all', pt:'all', half:5, pmult:1, tab:'rankings', sort:'take', dir:-1, heatSort:'all', role:'all',
+  const DEF = { lgs:[0,1,2,3,4,5], st:'all', pt:'all', half:5, pmult:1, tab:'rankings', sort:'take', dir:-1, heatSort:'all', heatDir:1, role:'all',
     lab:{ useDepth:false, useShrink:true, useTeam:false, useRecency:true, usePressure:true, topN:20, k:10, sort:'mix', dir:-1 } };
   const state = JSON.parse(JSON.stringify(DEF));
   try { const s = JSON.parse(localStorage.getItem('fdp-state5')||'null'); if (s && Array.isArray(s.lgs)) { Object.assign(state, s); state.lab = { ...DEF.lab, ...(s.lab||{}) }; } } catch(e) {}
@@ -753,6 +774,27 @@ const ROLEX = {"tests":31,"draft":{"gain":0.4062,"soft":0.3282,"lam9":0.4827,"pi
   if (TABS.includes(hashTab)) state.tab = hashTab; else if (hashTab==='method') state.tab = 'evidence';
   if (!TABS.includes(state.tab)) state.tab = state.tab==='method' ? 'evidence' : 'rankings';
   const save = () => { try { localStorage.setItem('fdp-state5', JSON.stringify(state)); } catch(e) {} };
+  // screen-reader announcements (the visible status line is not a live region, so resample counts don't chatter)
+  // VoiceOver reads "xPresence" as one word. Everywhere it appears, keep the visible word but have screen readers say "x Presence".
+  const SAY = 'x Presence', spoken = t => t.replace(/xPresence/g, SAY);
+  const speak = root => {
+    if (root.nodeType !== 1) return;
+    [root, ...root.querySelectorAll('[aria-label*="xPresence"]')].forEach(el => { const a = el.getAttribute && el.getAttribute('aria-label'); if (a && a.includes('xPresence')) el.setAttribute('aria-label', spoken(a)); });
+    const skip = 'svg, script, style, .xp, .sr-only';
+    if (root.closest(skip)) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.data.includes('xPresence') && !n.parentElement.closest(skip) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+    const hits = []; while (w.nextNode()) hits.push(w.currentNode);
+    hits.forEach(n => { const f = document.createDocumentFragment();
+      n.data.split('xPresence').forEach((part, i) => { if (i) { const x = document.createElement('span'); x.className = 'xp'; x.innerHTML = `<span aria-hidden="true">xPresence</span><span class="sr-only">${SAY}</span>`; f.append(x); } if (part) f.append(part); });
+      n.replaceWith(f); });
+  };
+  speak(document.body);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => speak(n.nodeType === 3 ? n.parentElement || document.body : n)))).observe(document.body, { childList:true, subtree:true });
+  let liveT; const live = msg => { clearTimeout(liveT); liveT = setTimeout(() => { $('sr-live').textContent = spoken(msg); }, 150); };
+  let announce = false;
+  const sortedSR = (on, dir, asc='ascending', desc='descending') => on ? `<span class="sr-only">, sorted ${dir<0?desc:asc}</span>` : '';
+  const th = (c, sort, dir) => `<th scope="col" data-k="${c.k}" class="${c.cls||''}${c.grp?' grp-'+c.grp:''}" ${sort===c.k?`aria-sort="${dir<0?'descending':'ascending'}"`:''}><button class="sortbtn">${c.t}${c.h2?` <span class="h2">${c.h2}</span>`:''}${sortedSR(sort===c.k, dir)}</button></th>`;
+  const dataTable = (id, head, rows) => { $(id+'-tbl').innerHTML = `<thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>` + rows.map(r=>`<tr>${r.map((v,i)=>i?`<td>${v}</td>`:`<th scope="row" class="name">${v}</th>`).join('')}</tr>`).join('') + '</tbody>'; $(id+'-data').hidden = !rows.length; };
   const ui = { q:'', all:false, labAll:false, open:new Set() };
   const filt = () => ({ lgs:new Set(state.lgs), st:state.st, pt:state.pt });
   // patch-notes adjustment: champion index -> strength multiplier (×1.25 per buff, ÷1.25 per nerf)
@@ -873,7 +915,7 @@ onmessage = e => {
     const top = [...L.rows].sort((a,b)=>b.take-a.take).slice(0,20);
     const W = 880, rowH = 25, padL = 112, padR = 118, padT = 24, H = padT + top.length*rowH + 6;
     const x = v => padL + (W-padL-padR) * v;
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Top 20 champions by xPresence with 80% ranges and gol.gg rank">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Top 20 champions by xPresence with 80% ranges and gol.gg rank. The same data is in a table below the chart.">`;
     for (let t=0; t<=1.0001; t+=0.2) {
       s += `<line x1="${x(t)}" x2="${x(t)}" y1="${padT-6}" y2="${H-4}" stroke="var(--line)"/>`;
       s += `<text x="${x(t)}" y="${padT-11}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">${Math.round(t*100)}%</text>`;
@@ -894,6 +936,7 @@ onmessage = e => {
       s += `<text x="${W-padR+30}" y="${cy+4}" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="${col}">#${r.gol}${arrow}</text>`;
     });
     $('chart').innerHTML = s + '</svg>';
+    dataTable('chart', ['Champion','xPresence','80% range','Patch-adjusted','gol.gg rank'], top.map(r => [r.name, pct(r.take)+'%', r.band?`${pct(r.band[0],0)}–${pct(r.band[1],0)}%`:'–', r.chg && r.adj!=null ? pct(r.adj)+'%' : '–', '#'+r.gol]));
   }
   const RCOLS = [
     {k:'pri', t:'#', cls:'rk'}, {k:'name', t:'Champion', cls:'name'}, {k:'role', t:'Role', cls:'name', h2:'this summer'},
@@ -921,9 +964,12 @@ onmessage = e => {
       <div><h3>Rank by league</h3><div class="kv">${lg}</div>
         <h3 style="margin-top:12px">Patch notes since this data</h3><p class="note">${ADJ_NOTES[r.c] ? ADJ_NOTES[r.c].join('; ') : 'No changes in ' + PATCH.patches.join(' or ') + '.'}</p></div></div>`;
   }
+  // keyboard focus lands on this sentence: VoiceOver reads a focused region's name only, but reads focused text in full
+  const detailSummary = r => `${r.name}: ${SAY} ${pct(r.take)}%${r.band?`, 80% range ${pct(r.band[0],0)} to ${pct(r.band[1],0)}%`:''}. Rank ${r.pri} here, ${r.gol} on gol.gg. ${r.p} picks and ${r.b} bans${r.wr==null?'':`, ${pct(r.wr,0)}% win rate when picked`}. Roles: ${roleText(r.c).replace(/ · /g, ', ')}. The full breakdown follows.`;
+  const detailRow = r => `<tr class="detail" id="det-${r.c}"><td colspan="${RCOLS.length}"><div class="det" role="region" aria-label="${r.name} details"><p class="sr-only det-sum" tabindex="-1">${detailSummary(r)}</p>${detailHTML(r)}</div></td></tr>`;
   function renderTable(){
     const thead = document.querySelector('#rank-tbl thead');
-    thead.innerHTML = '<tr>' + RCOLS.map(c=>`<th tabindex="0" data-k="${c.k}" class="${c.cls||''}" ${state.sort===c.k?`aria-sort="${state.dir<0?'descending':'ascending'}"`:''}>${c.t}${c.h2?`<span class="h2">${c.h2}</span>`:''}</th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr>' + RCOLS.map(c=>th(c, state.sort, state.dir)).join('') + '</tr>';
     const q = ui.q.trim().toLowerCase();
     const ro = state.role === 'all' ? null : +state.role;
     let list = L.rows.filter(r => (!q || r.name.toLowerCase().includes(q)) && (ro === null || (RSH[r.c] && RSH[r.c].sh[ro] >= 0.15)));
@@ -936,31 +982,34 @@ onmessage = e => {
     document.querySelector('#rank-tbl tbody').innerHTML = shown.map(r => {
       const open = ui.open.has(r.c);
       const gapCls = r.gap>=3?'d-up':r.gap<=-3?'d-dn':'muted';
-      return `<tr class="row" data-c="${r.c}" tabindex="0" aria-expanded="${open}">
-        <td class="rk">${ro===null ? r.pri : rrank.get(r.c)}</td><td class="name">${r.name}</td><td class="rl">${roleLabel(r.c)}</td>
+      return `<tr class="row" data-c="${r.c}">
+        <td class="rk">${ro===null ? r.pri : rrank.get(r.c)}</td><td class="name"><button class="rowbtn" aria-expanded="${open}"${open?` aria-controls="det-${r.c}"`:''}>${r.name}<span class="chev" aria-hidden="true">${open?' ⌄':' ›'}</span></button></td><td class="rl">${roleLabel(r.c)}</td>
         <td class="pri"><span class="pbar" style="width:${Math.round(44*r.take/maxT)}px"></span>${pct(r.take)}%</td>
         <td class="${r.chg==='up'?'d-up':r.chg==='down'?'d-dn':'muted'}">${r.adj==null?'–':pct(r.adj)+'%'}${r.chg==='up'?' ▲':r.chg==='down'?' ▼':''}</td>
         <td>#${r.gol}</td><td class="${gapCls}">${r.gap>0?'+':''}${r.gap}</td>
         <td>${r.p} / ${r.b}</td></tr>` +
-        (open ? `<tr class="detail"><td colspan="${RCOLS.length}">${detailHTML(r)}</td></tr>` : '');
+        (open ? detailRow(r) : '');
     }).join('');
     $('more').parentElement.hidden = !!q || list.length <= 40;
     $('more').textContent = ui.all ? 'Show top 40' : `Show all ${list.length}`;
+    return list.length;
   }
   function renderRankings(){ if (!PL) return; L.rows.forEach((r,i)=>{ const j = PL.champs.indexOf(r.c); r.band = PL.band ? PL.band[j] : null; }); renderChart(); renderTable(); }
 
   // ---------- leagues heatmap ----------
   function renderHeat(){
     const top = [...L.rows].sort((a,b)=>b.take-a.take).slice(0,30);
-    const hs = state.heatSort;
-    if (hs !== 'all') { const lr = L.lgRank[+hs]; top.sort((a,b)=>(lr.rank.get(a.c)||999)-(lr.rank.get(b.c)||999)); }
-    const head = `<thead><tr><th class="name" data-h="all" ${hs==='all'?'aria-sort="descending"':''}>Champion<span class="h2">overall rank</span></th>` +
-      L.lgRank.map(l=>`<th data-h="${l.lg}" ${String(hs)===String(l.lg)?'aria-sort="ascending"':''}>${D.LG[l.lg]}<span class="h2">${l.games} games</span></th>`).join('') + '</tr></thead>';
-    const body = top.map(r => `<tr><td class="name">${r.name} <span class="muted num" style="font-size:12px">#${r.pri}</span></td>` +
+    const hs = String(state.heatSort), hd = state.heatDir < 0 ? -1 : 1;
+    const rank = hs === 'all' ? (r => r.pri) : (r => L.lgRank[+hs].rank.get(r.c));
+    top.sort((a,b) => { const x = rank(a), y = rank(b); return x == null ? (y == null ? 0 : 1) : y == null ? -1 : hd*(x-y); });
+    const hth = (h, cls, label, sub) => { const on = hs === String(h);
+      return `<th scope="col"${cls?` class="${cls}"`:''} data-h="${h}" ${on?`aria-sort="${hd<0?'descending':'ascending'}"`:''}><button class="sortbtn">${label} <span class="h2">${sub}</span>${sortedSR(on, hd, 'by rank, number 1 first', 'by rank, number 1 last')}</button></th>`; };
+    const head = `<thead><tr>${hth('all','name','Champion','overall rank')}` + L.lgRank.map(l=>hth(l.lg, '', D.LG[l.lg], `${l.games} games`)).join('') + '</tr></thead>';
+    const body = top.map(r => `<tr><th scope="row" class="name">${r.name} <span class="muted num" style="font-size:12px">#${r.pri}</span></th>` +
       L.lgRank.map(l => { const t = l.take.get(r.c), rk = l.rank.get(r.c);
         if (!rk) return `<td class="cell muted">–</td>`;
-        const a = Math.round(Math.pow(t, 0.8) * 85);
-        return `<td class="cell${rk<=5?' top5':''}" title="${r.name}: #${rk} in ${D.LG[l.lg]}, ${pct(t)}%" style="background:color-mix(in srgb, var(--accent) ${a}%, transparent);color:${a>48?'var(--on-accent)':'var(--ink)'}">${rk}</td>`; }).join('') + '</tr>').join('');
+        const a = Math.pow(t, 0.8).toFixed(3);   // tint capped by --heat-max so the number stays readable in both themes
+        return `<td class="cell${rk<=5?' top5':''}" title="${r.name}: #${rk} in ${D.LG[l.lg]}, ${pct(t)}%" style="background:color-mix(in srgb, var(--accent) calc(${a} * var(--heat-max)), transparent)">${rk}<span class="sr-only">, ${pct(t)}%</span></td>`; }).join('') + '</tr>').join('');
     $('heat').innerHTML = head + '<tbody>' + body + '</tbody>';
   }
 
@@ -968,10 +1017,11 @@ onmessage = e => {
   function renderScatter(){
     const pts = L.rows.filter(r => r.nser >= 15);
     const W = 880, H = 420, pl = 56, pr = 24, pt = 20, pb = 44;
-    if (!pts.length) { $('scatter').innerHTML = '<p class="note">Not enough multi-game series in this filter.</p>'; return; }
+    if (!pts.length) { $('scatter').innerHTML = '<p class="note">Not enough multi-game series in this filter.</p>'; dataTable('scatter', [], []); return; }
+    dataTable('scatter', ['Champion','xPresence','Average first-pick game','Series'], [...pts].sort((a,b)=>b.take-a.take).map(r => [r.name, pct(r.take)+'%', r.first.toFixed(2), r.nser]));
     const yMax = Math.max(2.6, Math.ceil(Math.max(...pts.map(r=>r.first))*5)/5);
     const x = v => pl + (W-pl-pr) * v, y = v => pt + (H-pt-pb) * (v-1)/(yMax-1);
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="xPresence against average game of first pick">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="xPresence against average game of first pick. The same data is in a table below the chart.">`;
     for (let t=0; t<=1.0001; t+=0.2) s += `<line x1="${x(t)}" x2="${x(t)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)"/><text x="${x(t)}" y="${H-pb+16}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">${Math.round(t*100)}%</text>`;
     for (let g=1; g<=yMax+1e-9; g+=0.5) s += `<line x1="${pl}" x2="${W-pr}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="${pl-8}" y="${y(g)+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--faint)">G${g}</text>`;
     s += `<text x="${(pl+W-pr)/2}" y="${H-8}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="var(--muted)">xPresence →</text>`;
@@ -1006,7 +1056,7 @@ onmessage = e => {
     ];
     $('res-tbl').innerHTML = `<thead><tr><th>Test</th><th>Tests</th><th>Won</th><th>Gain<span class="h2">per draft action</span></th><th></th></tr></thead><tbody>` +
       rows.map(r => Array.isArray(r) ? `<tr class="grp"><td colspan="5">${r[1]}</td></tr>` :
-        `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}">Details</button></td></tr>`).join('') + '</tbody>';
+        `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}" aria-label="Details: ${r.t}">Details</button></td></tr>`).join('') + '</tbody>';
     $('res-note').textContent = `Headline: xPresence beat gol.gg in ${h5.domBeats + h5.intlBeats} of ${ROLL.domTests + ROLL.intlTests} rolling tests across ${ROLL.games.toLocaleString()} games at the current 5-day setting. Almost all of the gain comes from weighting recent games; without it, xPresence roughly ties gol.gg.`;
   }
   function renderRoles(){
@@ -1025,7 +1075,7 @@ onmessage = e => {
   function renderCalib(){
     const W = 420, H = 380, pl = 48, pr = 14, pt = 12, pb = 40;
     const x = v => pl + (W-pl-pr)*v, y = v => H-pb - (H-pt-pb)*v;
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Predicted xPresence against how often champions were actually taken" style="min-width:0;max-width:460px">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Predicted xPresence against how often champions were actually taken. The same data is in a table below." style="min-width:0;max-width:460px">`;
     for (let t=0; t<=1.0001; t+=0.2) {
       s += `<line x1="${x(t)}" x2="${x(t)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)"/><text x="${x(t)}" y="${H-pb+15}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${Math.round(t*100)}%</text>`;
       s += `<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(t)+4}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${Math.round(t*100)}%</text>`;
@@ -1043,6 +1093,7 @@ onmessage = e => {
     });
     s += `<g font-family="IBM Plex Sans, sans-serif" font-size="11.5">` + series.map(([k,col,lab],i)=>`<circle cx="${pl+14}" cy="${pt+14+i*18}" r="5" fill="${col}"/><text x="${pl+24}" y="${pt+18+i*18}" fill="var(--ink)">${lab}</text>`).join('') + `</g>`;
     $('calib').innerHTML = s + '</svg>';
+    dataTable('calib', ['Events','Average prediction','Actually taken','Champion-games'], series.flatMap(([k,,lab]) => CAL.bins[k].map(b => [lab, pct(b.pred)+'%', pct(b.act)+'%', b.n.toLocaleString()])));
     const top = k => CAL.bins[k][CAL.bins[k].length-1], mid = k => CAL.bins[k].find(b=>b.a===0.3);
     $('calib-notes').innerHTML = [
       `Domestic: close to the line everywhere. Champions rated 90%+ were taken ${pct(top('domestic').act,0)}% of the time (predicted ${pct(top('domestic').pred,0)}%).`,
@@ -1089,7 +1140,7 @@ onmessage = e => {
     const rows = R.champs.map(c => { const s = R.st.get(c), lr = L.byC.get(c);
       return { c, name:name(c), pres:(s.p+s.b)/n, golS:s.gol/n, base:R.base.get(c), depth:R.depth.get(c), shrink:R.shrink.get(c), team:R.team.get(c), recency:R.recency.get(c), pressure:R.pressure.get(c), mix:R.mix.get(c), take: lr ? lr.take : null, rk:R.ranks.mix.get(c) }; });
     const k = state.lab.sort; rows.sort((a,b)=> k==='name' ? state.lab.dir*a.name.localeCompare(b.name) : state.lab.dir*((a[k]??-1)-(b[k]??-1)));
-    document.querySelector('#lab-tbl thead').innerHTML = '<tr>' + LCOLS.map(c=>`<th tabindex="0" data-k="${c.k}" class="${c.cls||''} ${c.grp?'grp-'+c.grp:''}" ${k===c.k?`aria-sort="${state.lab.dir<0?'descending':'ascending'}"`:''}>${c.t}${c.h2?`<span class="h2">${c.h2}</span>`:''}</th>`).join('') + '</tr>';
+    document.querySelector('#lab-tbl thead').innerHTML = '<tr>' + LCOLS.map(c=>th(c, k, state.lab.dir)).join('') + '</tr>';
     const shown = ui.labAll ? rows : rows.slice(0,25);
     document.querySelector('#lab-tbl tbody').innerHTML = shown.map(r => '<tr>' + LCOLS.map(c => c.k==='name' ? `<td class="name">${r.name}</td>` : c.k==='rk' ? `<td class="rk">${r.rk}</td>` : `<td>${r[c.k]==null?'–':pct(r[c.k])}</td>`).join('') + '</tr>').join('');
     $('lab-more').textContent = ui.labAll ? 'Show top 25' : `Show all ${rows.length}`;
@@ -1124,7 +1175,7 @@ onmessage = e => {
     const lo = Math.min(-0.1, ...T.map(t=>Math.min(t.h10,t.h5))), hi = Math.max(...T.map(t=>Math.max(t.h10,t.h5)));
     const x = v => padL + (W-padL-padR) * (v-lo)/(hi-lo);
     const H2 = 40 + all.length*rowH + gap;
-    let s2 = `<svg viewBox="0 0 ${W} ${H2}" role="img" aria-label="xPresence versus gol.gg in every rolling test">`;
+    let s2 = `<svg viewBox="0 0 ${W} ${H2}" role="img" aria-label="xPresence versus gol.gg in every rolling test. The same data is in a table below the chart.">`;
     for (let t = Math.ceil(lo*10)/10; t <= hi+1e-9; t += 0.1) s2 += `<line x1="${x(t)}" x2="${x(t)}" y1="18" y2="${H2-4}" stroke="${Math.abs(t)<1e-9?'var(--muted)':'var(--line)'}"/><text x="${x(t)}" y="12" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--faint)">${t>0?'+':''}${Math.round(t*100)}%</text>`;
     let y = 38;
     all.forEach(t => {
@@ -1138,6 +1189,7 @@ onmessage = e => {
     });
     s2 += `<text x="4" y="33" font-family="IBM Plex Sans Condensed, sans-serif" font-size="10.5" letter-spacing=".06em" fill="var(--faint)">PATCHES</text>`;
     $('roll-chart').innerHTML = s2 + '</svg>';
+    dataTable('roll', ['Test','Type','10-day half-life','5-day half-life (current)','Games'], T.map(t => [t.label, t.kind==='domestic'?'Patch':'International', f(t.h10), f(t.h5), t.test]));
   }
   function renderMSI(){
     const x = MSI.rows[0], f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%';
@@ -1163,10 +1215,11 @@ onmessage = e => {
     if (!PL) return;
     L = localStats();
     renderSummary(); renderRankings(); renderHeat(); renderScatter();
+    if (announce) { announce = false; const t = [...L.rows].sort((a,b)=>b.take-a.take)[0]; live(`xPresence updated: ${L.n} games in ${L.series} series.` + (t ? ` Top: ${t.name}, ${pct(t.take)}%.` : '')); }
     if ($('d-archive').open) renderLab();
     save();
   }
-  function changed(){ syncControls(); save(); runPL(); }
+  function changed(){ announce = true; live('Updating xPresence…'); syncControls(); save(); runPL(); }
   let tmr; const soon = fn => { clearTimeout(tmr); tmr = setTimeout(fn, 220); };
 
   document.querySelectorAll('#seg-lg button').forEach(b=>b.addEventListener('click',()=>{ const v=+b.dataset.v, has=state.lgs.includes(v); if (has && state.lgs.length===1) return; state.lgs = has ? state.lgs.filter(x=>x!==v) : [...state.lgs, v].sort(); changed(); }));
@@ -1174,26 +1227,35 @@ onmessage = e => {
   document.querySelectorAll('#seg-st button').forEach(b=>b.addEventListener('click',()=>{ state.st=b.dataset.v; changed(); }));
   document.querySelectorAll('#seg-pt button').forEach(b=>b.addEventListener('click',()=>{ state.pt=b.dataset.v==='all'?'all':+b.dataset.v; changed(); }));
   document.querySelectorAll('[role=tab]').forEach(b=>b.addEventListener('click',()=>{ state.tab=b.dataset.tab; syncControls(); save(); try { history.replaceState(null,'','#'+state.tab); } catch(e) {} }));
-  document.querySelector('[role=tablist]').addEventListener('keydown', e => { if (e.key!=='ArrowRight' && e.key!=='ArrowLeft') return; const tabs=[...document.querySelectorAll('[role=tab]')]; const i=tabs.findIndex(t=>t.dataset.tab===state.tab); const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length]; n.click(); n.focus(); });
+  document.querySelector('[role=tablist]').addEventListener('keydown', e => { if (!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return; e.preventDefault(); const tabs=[...document.querySelectorAll('[role=tab]')]; const i=tabs.findIndex(t=>t.dataset.tab===state.tab); const n=e.key==='Home'?tabs[0]:e.key==='End'?tabs[tabs.length-1]:tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length]; n.click(); n.focus(); });
   $('kn-half').addEventListener('input', e => { state.half = +e.target.value; $('kv-half').textContent = state.half+' d'; soon(changed); });
   $('reset-pl').addEventListener('click', () => { state.half = DEF.half; changed(); });
-  $('q').addEventListener('input', e => { ui.q = e.target.value; renderTable(); });
-  document.querySelectorAll('#seg-role button').forEach(b=>b.addEventListener('click',()=>{ state.role = b.dataset.v==='all' ? 'all' : +b.dataset.v; syncControls(); renderTable(); save(); }));
+  const shownMsg = n => `${n} champion${n===1?'':'s'} shown`;
+  $('q').addEventListener('input', e => { ui.q = e.target.value; live(shownMsg(renderTable())); });
+  document.querySelectorAll('#seg-role button').forEach(b=>b.addEventListener('click',()=>{ state.role = b.dataset.v==='all' ? 'all' : +b.dataset.v; syncControls(); live(shownMsg(renderTable())); save(); }));
   $('more').addEventListener('click', () => { ui.all = !ui.all; renderTable(); });
-  const rankSort = th => { const k = th.dataset.k; if (state.sort===k) state.dir*=-1; else { state.sort=k; state.dir = ['name','pri','gol','role'].includes(k)?1:-1; } renderTable(); save(); };
+  // headers and rows are rebuilt on every render, so put focus back on the control that was used
+  const refocus = sel => { const el = document.querySelector(sel); if (el) el.focus(); };
+  const rankSort = th => { const k = th.dataset.k; if (state.sort===k) state.dir*=-1; else { state.sort=k; state.dir = ['name','pri','gol','role'].includes(k)?1:-1; } renderTable(); save(); refocus(`#rank-tbl th[data-k="${k}"] button`); };
   document.querySelector('#rank-tbl thead').addEventListener('click', e => { const th=e.target.closest('th'); if (th) rankSort(th); });
-  document.querySelector('#rank-tbl thead').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { const th=e.target.closest('th'); if (th) { e.preventDefault(); rankSort(th); } } });
-  const toggleRow = tr => { const c = +tr.dataset.c; ui.open.has(c) ? ui.open.delete(c) : ui.open.add(c); renderTable(); const again = document.querySelector(`#rank-tbl tr.row[data-c="${c}"]`); if (again) again.focus(); };
-  document.querySelector('#rank-tbl tbody').addEventListener('click', e => { const tr = e.target.closest('tr.row'); if (tr) toggleRow(tr); });
-  document.querySelector('#rank-tbl tbody').addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { const tr = e.target.closest('tr.row'); if (tr) { e.preventDefault(); toggleRow(tr); } } });
-  $('heat').addEventListener('click', e => { const th = e.target.closest('th'); if (!th) return; state.heatSort = th.dataset.h; renderHeat(); save(); });
+  const toggleRow = (tr, byKey) => { const c = +tr.dataset.c, btn = tr.querySelector('.rowbtn'), open = !ui.open.has(c);
+    open ? ui.open.add(c) : ui.open.delete(c);
+    btn.setAttribute('aria-expanded', open); btn.querySelector('.chev').textContent = open ? ' ⌄' : ' ›';
+    if (open) { btn.setAttribute('aria-controls', 'det-'+c); tr.insertAdjacentHTML('afterend', detailRow(L.byC.get(c))); if (byKey) tr.nextElementSibling.querySelector('.det-sum').focus(); }
+    else { btn.removeAttribute('aria-controls'); const d = $('det-'+c); if (d) d.remove(); } };
+  // e.detail is 0 when Enter or Space pressed the button
+  document.querySelector('#rank-tbl tbody').addEventListener('click', e => { const tr = e.target.closest('tr.row'); if (tr) toggleRow(tr, e.detail === 0 && !!e.target.closest('.rowbtn')); });
+  $('heat').addEventListener('click', e => { const th = e.target.closest('th'); if (!th) return; const h = th.dataset.h;
+    if (String(state.heatSort) === h) state.heatDir = state.heatDir < 0 ? 1 : -1; else { state.heatSort = h; state.heatDir = 1; }
+    renderHeat(); save(); refocus(`#heat th[data-h="${h}"] button`); });
   ADD.filter(a => !a.retired).forEach(a => { $('use-'+a.id).addEventListener('change', e => { state.lab[a.key] = e.target.checked; renderLab(); save(); });
     if (a.knob) $('kn-'+a.knob.id).addEventListener('input', e => { state.lab[a.knob.id] = +e.target.value; $('kv-'+a.knob.id).textContent = state.lab[a.knob.id]; soon(()=>{ renderLab(); save(); }); }); });
   $('lab-more').addEventListener('click', () => { ui.labAll = !ui.labAll; renderLab(); });
-  document.querySelector('#lab-tbl thead').addEventListener('click', e => { const th=e.target.closest('th'); if (!th) return; const k=th.dataset.k; if (state.lab.sort===k) state.lab.dir*=-1; else { state.lab.sort=k; state.lab.dir=(k==='name'||k==='rk')?1:-1; } renderLab(); save(); });
+  document.querySelector('#lab-tbl thead').addEventListener('click', e => { const th=e.target.closest('th'); if (!th) return; const k=th.dataset.k; if (state.lab.sort===k) state.lab.dir*=-1; else { state.lab.sort=k; state.lab.dir=(k==='name'||k==='rk')?1:-1; } renderLab(); save(); refocus(`#lab-tbl th[data-k="${k}"] button`); });
 
   $('d-archive').addEventListener('toggle', () => { if ($('d-archive').open && L) renderLab(); });
-  $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; d.scrollIntoView({ behavior:'smooth', block:'start' }); });
+  const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; const sm = d.querySelector('summary'); sm.focus({ preventScroll:true }); d.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block:'start' }); });
   renderResults(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
 })();
 </script>

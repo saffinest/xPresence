@@ -7,12 +7,14 @@
     <p class="dataline" id="dataline"></p>
   </header>
 
+  <main>
+  <p id="sr-live" class="sr-only" role="status"></p>
   <div class="bar">
-    <div class="frow"><span class="lab">League</span><div class="seg" id="seg-lg"></div><button class="linkbtn" id="lg-all">All</button></div>
-    <div class="frow"><span class="lab">Stage</span>
+    <div class="frow" role="group" aria-labelledby="lab-lg"><span class="lab" id="lab-lg">League</span><div class="seg" id="seg-lg"></div><button class="linkbtn" id="lg-all" aria-label="All leagues">All</button></div>
+    <div class="frow" role="group" aria-labelledby="lab-st"><span class="lab" id="lab-st">Stage</span>
       <div class="seg" id="seg-st"><button data-v="all">All</button><button data-v="0">Regular season</button><button data-v="1">Postseason</button></div>
     </div>
-    <div class="frow"><span class="lab">Patch</span><div class="seg" id="seg-pt"></div></div>
+    <div class="frow" role="group" aria-labelledby="lab-pt"><span class="lab" id="lab-pt">Patch</span><div class="seg" id="seg-pt"></div></div>
   </div>
 
   <div class="tabs" role="tablist">
@@ -32,12 +34,13 @@
       </div>
       <p class="explain"><b>xPresence (expected presence)</b> is the chance a champion gets picked or banned in a fresh Game 1 draft. Regular presence just counts how often a champion was picked or banned. xPresence estimates that rate from every real pick and ban, giving credit each time a team took the champion while other options were still available. It adjusts for fearless, so a champion used earlier in a series isn't penalized for being unavailable later, and recent games count more: a game loses half its weight every 5 days. <b>Patch-adjusted</b> goes one step further and nudges champions changed in the patches since this data (16.18 and 16.19) up for each buff and down for each nerf.</p>
       <div class="chart" id="chart"></div>
+      <details class="chart-data" id="chart-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="chart-tbl" aria-label="Top 20 by xPresence"></table></div></details>
       <p class="note">The shaded range shows how much the number moves when the series are resampled. Where two champions' ranges overlap, treat them as tied. On the right, gol.gg's PrioScore rank for comparison.</p>
     </div>
     <div class="card">
-      <div class="tbar"><h2>All champions</h2><div class="frow"><span class="lab">Role</span><div class="seg" id="seg-role"></div><label class="lab" for="q" style="margin-left:8px">Find</label><input type="search" id="q" placeholder="Champion"></div></div>
+      <div class="tbar"><h2>All champions</h2><div class="frow"><div class="frow" role="group" aria-labelledby="lab-role"><span class="lab" id="lab-role">Role</span><div class="seg" id="seg-role"></div></div><label class="lab" for="q" style="margin-left:8px">Find</label><input type="search" id="q" placeholder="Champion"></div></div>
       <p class="note">Click a row for its 80% range, win rate, how it was drafted, how teams use it across a series, and its rank in each league. Picking a role shows every champion played there at least 15% of the time this summer, so flex picks appear under each of their roles, and # becomes the rank within that role.</p>
-      <div class="tscroll"><table id="rank-tbl"><thead></thead><tbody></tbody></table></div>
+      <div class="tscroll"><table id="rank-tbl" aria-label="All champions"><thead></thead><tbody></tbody></table></div>
       <div class="more"><button id="more">Show all</button></div>
     </div>
   </section>
@@ -47,7 +50,7 @@
     <div class="card">
       <div class="card-hd"><h2>xPresence rank in each league</h2><span class="note">Each league scored on its own. Stage and patch filters apply; the league filter doesn't.</span></div>
       <p class="note">Darker cells mean higher xPresence in that league. <span class="top5-key">Outlined</span> cells are that league's top 5. A dash means no team in that league picked or banned the champion. Click a league to sort by it.</p>
-      <div class="tscroll"><table id="heat"></table></div>
+      <div class="tscroll"><table id="heat" aria-label="xPresence rank in each league"></table></div>
     </div>
   </section>
 
@@ -57,6 +60,7 @@
       <div class="card-hd"><h2>Burned early or held back</h2><span class="note">Champions picked in at least 15 multi-game series</span></div>
       <p class="note">Under fearless, a champion can be played once per series. Across: xPresence. Down: the average game of the series in which the champion was first picked. Near the top, teams use it right away; lower down, they save it. Hover a dot for its numbers.</p>
       <div class="chart" id="scatter"></div>
+      <details class="chart-data" id="scatter-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="scatter-tbl" aria-label="Burned early or held back, every champion"></table></div></details>
     </div>
   </section>
 
@@ -65,7 +69,7 @@
     <div class="card">
       <div class="card-hd"><h2>Test results</h2><span class="note">Each test predicts real drafts the model never saw</span></div>
       <p class="note">Every test builds xPresence from earlier games only, then scores how likely it found each real pick and ban, one draft action at a time, among the champions still available. "Gain" is how much more likely than gol.gg's PrioScore; higher is better.</p>
-      <div class="tscroll"><table class="bt" id="res-tbl"></table></div>
+      <div class="tscroll"><table class="bt" id="res-tbl" aria-label="Test results"></table></div>
       <p class="note" id="res-note"></p>
     </div>
 
@@ -78,6 +82,7 @@
           <ul class="plain" id="calib-notes" style="font-size:13px"></ul>
         </div>
       </div>
+      <details class="chart-data" id="calib-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="calib-tbl" aria-label="Are the percentages accurate, by group"></table></div></details>
     </div>
 
     <details class="card fold" id="d-rolling">
@@ -97,6 +102,7 @@
       <h3>Every test</h3>
       <p class="note">Bar: 10-day half-life (the setting until Sep 26). Dot: 5-day half-life (current). Right of zero means better than gol.gg.</p>
       <div class="chart" id="roll-chart"></div>
+      <details class="chart-data" id="roll-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="roll-tbl" aria-label="Rolling tests, every test"></table></div></details>
     </details>
 
     <details class="card fold" id="d-msi">
@@ -140,7 +146,7 @@
       <div class="sub-card">
         <div class="card-hd"><h3>Weighted-score lab</h3><span class="note">The hand-weighted score and its five add-ons</span></div>
         <div class="addons" id="addons"></div>
-        <div class="tscroll"><table id="lab-tbl"><thead></thead><tbody></tbody></table></div>
+        <div class="tscroll"><table id="lab-tbl" aria-label="Weighted-score lab"><thead></thead><tbody></tbody></table></div>
         <div class="more"><button id="lab-more">Show all</button></div>
       </div>
 
@@ -213,4 +219,5 @@
       </tbody></table></div>
     </div>
   </section>
+  </main>
 </div>
