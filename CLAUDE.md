@@ -112,6 +112,7 @@ These are public, pre-registered predictions. Changing them after the fact defea
 - **Writing:** short, plain sentences in dashboard copy. Every new finding gets a row in the Evidence tab's results table plus a collapsible details section.
 - **Credit:** Oracle's Elixir (Tim Sevenhuysen), gol.gg and LoLalytics, in the footer and README. Not affiliated with Riot.
 - **Git:** `~/Downloads/xpresence` is a git checkout of https://github.com/saffinest/xPresence (branch `main`). Pushes authenticate through the GitHub CLI login (`gh auth setup-git` has been run). Pushing `main` updates the live site.
+  - Commits must use the name `saffirephire` and the email `334357258+saffinest@users.noreply.github.com` (set in this repo's `.git/config`). Never the owner's real name or a personal email. Check `git config user.name` before committing in a new checkout.
 - **Commits:** small commits with messages that say what changed on the page. Don't commit raw CSVs or large intermediate JSONs such as `all_games*.json`. `.gitignore` already covers `*.csv`, `analysis/all_games*.json` and `node_modules/`.
 
 ## History
