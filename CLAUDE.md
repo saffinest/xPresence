@@ -24,7 +24,7 @@ Read this first. It carries the project's decisions and history from earlier ses
 - **After any change,** load the page headlessly (for example Playwright with Chromium) and do three things:
   - click every tab and check the console for errors;
   - change a league filter, wait for "Range from 40 resamples", and confirm the worker ran;
-  - check a 390px-wide viewport for horizontal overflow.
+  - check a 390px-wide viewport for horizontal overflow on every tab, with the Evidence sections expanded.
   - The only acceptable console error is the Google Fonts request when offline.
 - **Caution:** never read and write the same file in one expression, e.g. `open(f,'w').write(open(f).read())`. It truncates the file first. This once wiped the stylesheet.
 
@@ -99,6 +99,14 @@ These are public, pre-registered predictions. Changing them after the fact defea
 ## Conventions
 
 - **Naming:** the stat is **xPresence**. It's compared with "gol.gg's PrioScore", and results read "+x% vs gol.gg".
+- **Accessibility** (fixed Sep 27; keep it that way):
+  - Text colors must reach 4.5:1 on every background they sit on. `--faint` is the lightest text gray allowed; header subtitles and text on tinted cards use `--muted`. Heatmap tint is capped by `--heat-max`.
+  - Every chart gets a "Show this chart as a table" toggle (`dataTable()` in `script.html`); hover tooltips alone don't count.
+  - Clickable things are real `<button>`s: sort headers use `th()`, expandable rows use `.rowbtn`. Restore focus after a re-render.
+  - VoiceOver reads a header button, not the header's `aria-sort`, so the sort state also goes in the button as hidden text (`sortedSR()`). Every sortable column toggles both directions.
+  - Opening a row with the keyboard moves focus into its details region so it gets read. Mouse clicks leave focus alone.
+  - Screen readers say "x Presence": `speak()` in `script.html` wraps every visible "xPresence" (including text added later) in a hidden spoken version. Just write "xPresence" as usual; for speech-only strings use `SAY`/`spoken()`.
+  - Announce filter results through `live()` (the `#sr-live` region), not the visible status line.
 - **Writing:** short, plain sentences in dashboard copy. Every new finding gets a row in the Evidence tab's results table plus a collapsible details section.
 - **Credit:** Oracle's Elixir (Tim Sevenhuysen), gol.gg and LoLalytics, in the footer and README. Not affiliated with Riot.
 - **Commits:** small commits with messages that say what changed on the page. Don't commit raw CSVs or large intermediate JSONs such as `all_games*.json`. `.gitignore` already covers `*.csv`, `analysis/all_games*.json` and `node_modules/`.
