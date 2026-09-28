@@ -1,0 +1,1701 @@
+{
+ "event": "2026 Demacia Cup Global Invitational (Oct 3-17, 2026)",
+ "frozen": "2026-09-27",
+ "author": "@saffirephire",
+ "field": [
+  "KT Rolster",
+  "BNK FEARX",
+  "HANJIN BRION",
+  "JD Gaming",
+  "Team WE",
+  "LGD Gaming",
+  "Natus Vincere",
+  "Team Vitality",
+  "Shopify Rebellion",
+  "FlyQuest",
+  "GAM Esports",
+  "RED Canids"
+ ],
+ "data": "2026 summer splits of LCK, LPL, LEC, LCS, CBLOL, LCP: 775 games (Oracle's Elixir, 13 from gol.gg); 375 involve Demacia Cup teams",
+ "expectedPatch": "16.19 (16.20 is not released until Oct 7); patch adjustment covers 16.18 and 16.19",
+ "main": {
+  "name": "xPresence, patch-adjusted (same model and settings as the Worlds baseline)",
+  "settings": "Plackett-Luce, 5-day half-life, no deciding-game weight, x1.25 per buff / ÷1.25 per nerf (16.18-16.19)",
+  "ranking": [
+   {
+    "rank": 1,
+    "champion": "Cassiopeia",
+    "xPresence": 0.9878,
+    "unadjusted": 0.9862
+   },
+   {
+    "rank": 2,
+    "champion": "Nocturne",
+    "xPresence": 0.872,
+    "unadjusted": 0.9165
+   },
+   {
+    "rank": 3,
+    "champion": "Vi",
+    "xPresence": 0.7732,
+    "unadjusted": 0.8375
+   },
+   {
+    "rank": 4,
+    "champion": "Orianna",
+    "xPresence": 0.7075,
+    "unadjusted": 0.6987
+   },
+   {
+    "rank": 5,
+    "champion": "Jarvan IV",
+    "xPresence": 0.7,
+    "unadjusted": 0.6887
+   },
+   {
+    "rank": 6,
+    "champion": "Ezreal",
+    "xPresence": 0.659,
+    "unadjusted": 0.6495
+   },
+   {
+    "rank": 7,
+    "champion": "Olaf",
+    "xPresence": 0.6298,
+    "unadjusted": 0.6215
+   },
+   {
+    "rank": 8,
+    "champion": "Rumble",
+    "xPresence": 0.5995,
+    "unadjusted": 0.5915
+   },
+   {
+    "rank": 9,
+    "champion": "Lucian",
+    "xPresence": 0.5938,
+    "unadjusted": 0.5827
+   },
+   {
+    "rank": 10,
+    "champion": "Lee Sin",
+    "xPresence": 0.4823,
+    "unadjusted": 0.4735
+   },
+   {
+    "rank": 11,
+    "champion": "Ryze",
+    "xPresence": 0.48,
+    "unadjusted": 0.472
+   },
+   {
+    "rank": 12,
+    "champion": "Lulu",
+    "xPresence": 0.4447,
+    "unadjusted": 0.4375
+   },
+   {
+    "rank": 13,
+    "champion": "Jayce",
+    "xPresence": 0.4407,
+    "unadjusted": 0.4365
+   },
+   {
+    "rank": 14,
+    "champion": "Syndra",
+    "xPresence": 0.3688,
+    "unadjusted": 0.4273
+   },
+   {
+    "rank": 15,
+    "champion": "Seraphine",
+    "xPresence": 0.3633,
+    "unadjusted": 0.417
+   },
+   {
+    "rank": 16,
+    "champion": "Akali",
+    "xPresence": 0.3578,
+    "unadjusted": 0.3518
+   },
+   {
+    "rank": 17,
+    "champion": "KSante",
+    "xPresence": 0.3525,
+    "unadjusted": 0.3463
+   },
+   {
+    "rank": 18,
+    "champion": "Yunara",
+    "xPresence": 0.3488,
+    "unadjusted": 0.3425
+   },
+   {
+    "rank": 19,
+    "champion": "Pantheon",
+    "xPresence": 0.337,
+    "unadjusted": 0.3307
+   },
+   {
+    "rank": 20,
+    "champion": "Caitlyn",
+    "xPresence": 0.327,
+    "unadjusted": 0.3222
+   },
+   {
+    "rank": 21,
+    "champion": "Qiyana",
+    "xPresence": 0.295,
+    "unadjusted": 0.288
+   },
+   {
+    "rank": 22,
+    "champion": "Naafiri",
+    "xPresence": 0.2762,
+    "unadjusted": 0.2705
+   },
+   {
+    "rank": 23,
+    "champion": "Kalista",
+    "xPresence": 0.2675,
+    "unadjusted": 0.262
+   },
+   {
+    "rank": 24,
+    "champion": "Karma",
+    "xPresence": 0.2657,
+    "unadjusted": 0.259
+   },
+   {
+    "rank": 25,
+    "champion": "Nautilus",
+    "xPresence": 0.2605,
+    "unadjusted": 0.312
+   },
+   {
+    "rank": 26,
+    "champion": "Viktor",
+    "xPresence": 0.26,
+    "unadjusted": 0.2542
+   },
+   {
+    "rank": 27,
+    "champion": "Milio",
+    "xPresence": 0.2447,
+    "unadjusted": 0.2385
+   },
+   {
+    "rank": 28,
+    "champion": "Ashe",
+    "xPresence": 0.239,
+    "unadjusted": 0.231
+   },
+   {
+    "rank": 29,
+    "champion": "Ambessa",
+    "xPresence": 0.235,
+    "unadjusted": 0.2295
+   },
+   {
+    "rank": 30,
+    "champion": "Gnar",
+    "xPresence": 0.2245,
+    "unadjusted": 0.22
+   },
+   {
+    "rank": 31,
+    "champion": "Renata Glasc",
+    "xPresence": 0.2208,
+    "unadjusted": 0.2162
+   },
+   {
+    "rank": 32,
+    "champion": "Camille",
+    "xPresence": 0.1923,
+    "unadjusted": 0.1883
+   },
+   {
+    "rank": 33,
+    "champion": "Wukong",
+    "xPresence": 0.19,
+    "unadjusted": 0.1855
+   },
+   {
+    "rank": 34,
+    "champion": "Galio",
+    "xPresence": 0.1815,
+    "unadjusted": 0.1777
+   },
+   {
+    "rank": 35,
+    "champion": "Rakan",
+    "xPresence": 0.1755,
+    "unadjusted": 0.1713
+   },
+   {
+    "rank": 36,
+    "champion": "Trundle",
+    "xPresence": 0.1715,
+    "unadjusted": 0.1685
+   },
+   {
+    "rank": 37,
+    "champion": "Alistar",
+    "xPresence": 0.167,
+    "unadjusted": 0.1648
+   },
+   {
+    "rank": 38,
+    "champion": "Skarner",
+    "xPresence": 0.1658,
+    "unadjusted": 0.1615
+   },
+   {
+    "rank": 39,
+    "champion": "Locke",
+    "xPresence": 0.165,
+    "unadjusted": 0.1623
+   },
+   {
+    "rank": 40,
+    "champion": "Jhin",
+    "xPresence": 0.1633,
+    "unadjusted": 0.1628
+   },
+   {
+    "rank": 41,
+    "champion": "Bard",
+    "xPresence": 0.1623,
+    "unadjusted": 0.1915
+   },
+   {
+    "rank": 42,
+    "champion": "Annie",
+    "xPresence": 0.1557,
+    "unadjusted": 0.1512
+   },
+   {
+    "rank": 43,
+    "champion": "Renekton",
+    "xPresence": 0.1542,
+    "unadjusted": 0.1507
+   },
+   {
+    "rank": 44,
+    "champion": "Xin Zhao",
+    "xPresence": 0.1502,
+    "unadjusted": 0.1475
+   },
+   {
+    "rank": 45,
+    "champion": "Twisted Fate",
+    "xPresence": 0.1485,
+    "unadjusted": 0.1452
+   },
+   {
+    "rank": 46,
+    "champion": "Sylas",
+    "xPresence": 0.148,
+    "unadjusted": 0.1445
+   },
+   {
+    "rank": 47,
+    "champion": "Ahri",
+    "xPresence": 0.138,
+    "unadjusted": 0.134
+   },
+   {
+    "rank": 48,
+    "champion": "Xayah",
+    "xPresence": 0.1345,
+    "unadjusted": 0.1325
+   },
+   {
+    "rank": 49,
+    "champion": "Varus",
+    "xPresence": 0.1343,
+    "unadjusted": 0.1315
+   },
+   {
+    "rank": 50,
+    "champion": "Vayne",
+    "xPresence": 0.122,
+    "unadjusted": 0.1195
+   },
+   {
+    "rank": 51,
+    "champion": "Yone",
+    "xPresence": 0.112,
+    "unadjusted": 0.1085
+   },
+   {
+    "rank": 52,
+    "champion": "Chogath",
+    "xPresence": 0.1087,
+    "unadjusted": 0.1052
+   },
+   {
+    "rank": 53,
+    "champion": "Maokai",
+    "xPresence": 0.1065,
+    "unadjusted": 0.1042
+   },
+   {
+    "rank": 54,
+    "champion": "Poppy",
+    "xPresence": 0.1055,
+    "unadjusted": 0.126
+   },
+   {
+    "rank": 55,
+    "champion": "Ziggs",
+    "xPresence": 0.1015,
+    "unadjusted": 0.0998
+   },
+   {
+    "rank": 56,
+    "champion": "Anivia",
+    "xPresence": 0.0995,
+    "unadjusted": 0.0968
+   },
+   {
+    "rank": 57,
+    "champion": "Gwen",
+    "xPresence": 0.0838,
+    "unadjusted": 0.0808
+   },
+   {
+    "rank": 58,
+    "champion": "Rell",
+    "xPresence": 0.0808,
+    "unadjusted": 0.0798
+   },
+   {
+    "rank": 59,
+    "champion": "Zeri",
+    "xPresence": 0.0805,
+    "unadjusted": 0.1003
+   },
+   {
+    "rank": 60,
+    "champion": "Sivir",
+    "xPresence": 0.0752,
+    "unadjusted": 0.0747
+   },
+   {
+    "rank": 61,
+    "champion": "Taliyah",
+    "xPresence": 0.0742,
+    "unadjusted": 0.0732
+   },
+   {
+    "rank": 62,
+    "champion": "Kaisa",
+    "xPresence": 0.074,
+    "unadjusted": 0.0725
+   },
+   {
+    "rank": 63,
+    "champion": "Corki",
+    "xPresence": 0.0727,
+    "unadjusted": 0.071
+   },
+   {
+    "rank": 64,
+    "champion": "Shyvana",
+    "xPresence": 0.0727,
+    "unadjusted": 0.071
+   },
+   {
+    "rank": 65,
+    "champion": "Jax",
+    "xPresence": 0.0698,
+    "unadjusted": 0.0683
+   },
+   {
+    "rank": 66,
+    "champion": "LeBlanc",
+    "xPresence": 0.0695,
+    "unadjusted": 0.0678
+   },
+   {
+    "rank": 67,
+    "champion": "Shen",
+    "xPresence": 0.0673,
+    "unadjusted": 0.066
+   },
+   {
+    "rank": 68,
+    "champion": "Miss Fortune",
+    "xPresence": 0.0663,
+    "unadjusted": 0.0658
+   },
+   {
+    "rank": 69,
+    "champion": "Aurora",
+    "xPresence": 0.066,
+    "unadjusted": 0.0522
+   },
+   {
+    "rank": 70,
+    "champion": "Lissandra",
+    "xPresence": 0.0648,
+    "unadjusted": 0.064
+   },
+   {
+    "rank": 71,
+    "champion": "Neeko",
+    "xPresence": 0.0643,
+    "unadjusted": 0.0638
+   },
+   {
+    "rank": 72,
+    "champion": "Yorick",
+    "xPresence": 0.061,
+    "unadjusted": 0.0602
+   },
+   {
+    "rank": 73,
+    "champion": "Ornn",
+    "xPresence": 0.0568,
+    "unadjusted": 0.0563
+   },
+   {
+    "rank": 74,
+    "champion": "Kled",
+    "xPresence": 0.0563,
+    "unadjusted": 0.0558
+   },
+   {
+    "rank": 75,
+    "champion": "Tristana",
+    "xPresence": 0.0553,
+    "unadjusted": 0.055
+   },
+   {
+    "rank": 76,
+    "champion": "Sion",
+    "xPresence": 0.0548,
+    "unadjusted": 0.054
+   },
+   {
+    "rank": 77,
+    "champion": "Leona",
+    "xPresence": 0.0505,
+    "unadjusted": 0.0485
+   },
+   {
+    "rank": 78,
+    "champion": "Thresh",
+    "xPresence": 0.0485,
+    "unadjusted": 0.048
+   },
+   {
+    "rank": 79,
+    "champion": "Kennen",
+    "xPresence": 0.048,
+    "unadjusted": 0.0473
+   },
+   {
+    "rank": 80,
+    "champion": "Jinx",
+    "xPresence": 0.0478,
+    "unadjusted": 0.047
+   },
+   {
+    "rank": 81,
+    "champion": "Aatrox",
+    "xPresence": 0.0442,
+    "unadjusted": 0.0343
+   },
+   {
+    "rank": 82,
+    "champion": "Sejuani",
+    "xPresence": 0.0435,
+    "unadjusted": 0.0435
+   },
+   {
+    "rank": 83,
+    "champion": "Yuumi",
+    "xPresence": 0.0428,
+    "unadjusted": 0.0425
+   },
+   {
+    "rank": 84,
+    "champion": "Aphelios",
+    "xPresence": 0.0428,
+    "unadjusted": 0.0333
+   },
+   {
+    "rank": 85,
+    "champion": "Dr. Mundo",
+    "xPresence": 0.0418,
+    "unadjusted": 0.04
+   },
+   {
+    "rank": 86,
+    "champion": "Azir",
+    "xPresence": 0.0405,
+    "unadjusted": 0.0385
+   },
+   {
+    "rank": 87,
+    "champion": "Mel",
+    "xPresence": 0.0377,
+    "unadjusted": 0.037
+   },
+   {
+    "rank": 88,
+    "champion": "Gragas",
+    "xPresence": 0.0375,
+    "unadjusted": 0.0367
+   },
+   {
+    "rank": 89,
+    "champion": "Zaahen",
+    "xPresence": 0.0362,
+    "unadjusted": 0.0348
+   },
+   {
+    "rank": 90,
+    "champion": "Volibear",
+    "xPresence": 0.0333,
+    "unadjusted": 0.033
+   },
+   {
+    "rank": 91,
+    "champion": "Hwei",
+    "xPresence": 0.0323,
+    "unadjusted": 0.031
+   },
+   {
+    "rank": 92,
+    "champion": "Ivern",
+    "xPresence": 0.0305,
+    "unadjusted": 0.0302
+   },
+   {
+    "rank": 93,
+    "champion": "Nidalee",
+    "xPresence": 0.0283,
+    "unadjusted": 0.028
+   },
+   {
+    "rank": 94,
+    "champion": "KhaZix",
+    "xPresence": 0.0265,
+    "unadjusted": 0.0203
+   },
+   {
+    "rank": 95,
+    "champion": "Lux",
+    "xPresence": 0.0248,
+    "unadjusted": 0.0243
+   },
+   {
+    "rank": 96,
+    "champion": "Amumu",
+    "xPresence": 0.0238,
+    "unadjusted": 0.0225
+   },
+   {
+    "rank": 97,
+    "champion": "Draven",
+    "xPresence": 0.023,
+    "unadjusted": 0.0168
+   },
+   {
+    "rank": 98,
+    "champion": "Braum",
+    "xPresence": 0.0205,
+    "unadjusted": 0.0203
+   },
+   {
+    "rank": 99,
+    "champion": "Malphite",
+    "xPresence": 0.0203,
+    "unadjusted": 0.0198
+   },
+   {
+    "rank": 100,
+    "champion": "Zoe",
+    "xPresence": 0.0195,
+    "unadjusted": 0.0192
+   },
+   {
+    "rank": 101,
+    "champion": "Blitzcrank",
+    "xPresence": 0.0192,
+    "unadjusted": 0.0192
+   },
+   {
+    "rank": 102,
+    "champion": "Tahm Kench",
+    "xPresence": 0.019,
+    "unadjusted": 0.019
+   },
+   {
+    "rank": 103,
+    "champion": "Pyke",
+    "xPresence": 0.0187,
+    "unadjusted": 0.019
+   },
+   {
+    "rank": 104,
+    "champion": "Elise",
+    "xPresence": 0.0177,
+    "unadjusted": 0.0143
+   },
+   {
+    "rank": 105,
+    "champion": "Fiora",
+    "xPresence": 0.0173,
+    "unadjusted": 0.0143
+   },
+   {
+    "rank": 106,
+    "champion": "Diana",
+    "xPresence": 0.0168,
+    "unadjusted": 0.0158
+   },
+   {
+    "rank": 107,
+    "champion": "Hecarim",
+    "xPresence": 0.0163,
+    "unadjusted": 0.016
+   },
+   {
+    "rank": 108,
+    "champion": "Nasus",
+    "xPresence": 0.016,
+    "unadjusted": 0.0205
+   },
+   {
+    "rank": 109,
+    "champion": "Mordekaiser",
+    "xPresence": 0.0158,
+    "unadjusted": 0.0152
+   },
+   {
+    "rank": 110,
+    "champion": "Senna",
+    "xPresence": 0.0158,
+    "unadjusted": 0.0155
+   },
+   {
+    "rank": 111,
+    "champion": "Udyr",
+    "xPresence": 0.0155,
+    "unadjusted": 0.0145
+   },
+   {
+    "rank": 112,
+    "champion": "Yasuo",
+    "xPresence": 0.0155,
+    "unadjusted": 0.0147
+   },
+   {
+    "rank": 113,
+    "champion": "Swain",
+    "xPresence": 0.0155,
+    "unadjusted": 0.0145
+   },
+   {
+    "rank": 114,
+    "champion": "Xerath",
+    "xPresence": 0.0152,
+    "unadjusted": 0.015
+   },
+   {
+    "rank": 115,
+    "champion": "Taric",
+    "xPresence": 0.015,
+    "unadjusted": 0.0145
+   },
+   {
+    "rank": 116,
+    "champion": "Nami",
+    "xPresence": 0.0147,
+    "unadjusted": 0.0147
+   },
+   {
+    "rank": 117,
+    "champion": "Aurelion Sol",
+    "xPresence": 0.0147,
+    "unadjusted": 0.0145
+   },
+   {
+    "rank": 118,
+    "champion": "KogMaw",
+    "xPresence": 0.0145,
+    "unadjusted": 0.014
+   },
+   {
+    "rank": 119,
+    "champion": "Zed",
+    "xPresence": 0.0143,
+    "unadjusted": 0.014
+   },
+   {
+    "rank": 120,
+    "champion": "Tryndamere",
+    "xPresence": 0.014,
+    "unadjusted": 0.0138
+   },
+   {
+    "rank": 121,
+    "champion": "Soraka",
+    "xPresence": 0.0138,
+    "unadjusted": 0.0132
+   },
+   {
+    "rank": 122,
+    "champion": "Kindred",
+    "xPresence": 0.0135,
+    "unadjusted": 0.0135
+   },
+   {
+    "rank": 123,
+    "champion": "Samira",
+    "xPresence": 0.0135,
+    "unadjusted": 0.0135
+   },
+   {
+    "rank": 124,
+    "champion": "Irelia",
+    "xPresence": 0.0132,
+    "unadjusted": 0.013
+   },
+   {
+    "rank": 125,
+    "champion": "Gangplank",
+    "xPresence": 0.0132,
+    "unadjusted": 0.013
+   },
+   {
+    "rank": 126,
+    "champion": "Vladimir",
+    "xPresence": 0.013,
+    "unadjusted": 0.0127
+   },
+   {
+    "rank": 127,
+    "champion": "Kayn",
+    "xPresence": 0.013,
+    "unadjusted": 0.0125
+   },
+   {
+    "rank": 128,
+    "champion": "Graves",
+    "xPresence": 0.0127,
+    "unadjusted": 0.0123
+   },
+   {
+    "rank": 129,
+    "champion": "Zyra",
+    "xPresence": 0.0127,
+    "unadjusted": 0.012
+   },
+   {
+    "rank": 130,
+    "champion": "VelKoz",
+    "xPresence": 0.0125,
+    "unadjusted": 0.0127
+   },
+   {
+    "rank": 131,
+    "champion": "Warwick",
+    "xPresence": 0.0123,
+    "unadjusted": 0.0118
+   },
+   {
+    "rank": 132,
+    "champion": "Vex",
+    "xPresence": 0.012,
+    "unadjusted": 0.0115
+   },
+   {
+    "rank": 133,
+    "champion": "Garen",
+    "xPresence": 0.0118,
+    "unadjusted": 0.0115
+   },
+   {
+    "rank": 134,
+    "champion": "Sett",
+    "xPresence": 0.0115,
+    "unadjusted": 0.0112
+   },
+   {
+    "rank": 135,
+    "champion": "Urgot",
+    "xPresence": 0.0112,
+    "unadjusted": 0.0105
+   },
+   {
+    "rank": 136,
+    "champion": "Belveth",
+    "xPresence": 0.011,
+    "unadjusted": 0.0107
+   }
+  ]
+ },
+ "comparison": {
+  "name": "Field-weighted xPresence, patch-adjusted",
+  "settings": "Same, but games involving a Demacia Cup team count double",
+  "why": "At the 5 past international events, doubling the field teams' games helped in 5 of 5 (+1.7% pooled). About half of that came from a weaker prior (doubling every game gave +0.8%); the field-specific part helped in 4 of 5 (about +0.9%).",
+  "pastEvents": [
+   {
+    "event": "FST 2025",
+    "fieldX2_vs_all": 0.0198,
+    "allX2_vs_all": 0.0019
+   },
+   {
+    "event": "MSI 2025",
+    "fieldX2_vs_all": 0.0222,
+    "allX2_vs_all": 0.0166
+   },
+   {
+    "event": "WLDs 2025",
+    "fieldX2_vs_all": 0.0142,
+    "allX2_vs_all": 0.0046
+   },
+   {
+    "event": "FST 2026",
+    "fieldX2_vs_all": 0.0239,
+    "allX2_vs_all": 0.0132
+   },
+   {
+    "event": "MSI 2026",
+    "fieldX2_vs_all": 0.0026,
+    "allX2_vs_all": 0.0036
+   }
+  ],
+  "ranking": [
+   {
+    "rank": 1,
+    "champion": "Cassiopeia",
+    "xPresence": 0.9988,
+    "unadjusted": 0.999
+   },
+   {
+    "rank": 2,
+    "champion": "Nocturne",
+    "xPresence": 0.9177,
+    "unadjusted": 0.9527
+   },
+   {
+    "rank": 3,
+    "champion": "Vi",
+    "xPresence": 0.8087,
+    "unadjusted": 0.8652
+   },
+   {
+    "rank": 4,
+    "champion": "Orianna",
+    "xPresence": 0.757,
+    "unadjusted": 0.748
+   },
+   {
+    "rank": 5,
+    "champion": "Ezreal",
+    "xPresence": 0.7375,
+    "unadjusted": 0.728
+   },
+   {
+    "rank": 6,
+    "champion": "Jarvan IV",
+    "xPresence": 0.7312,
+    "unadjusted": 0.7222
+   },
+   {
+    "rank": 7,
+    "champion": "Lucian",
+    "xPresence": 0.652,
+    "unadjusted": 0.6432
+   },
+   {
+    "rank": 8,
+    "champion": "Rumble",
+    "xPresence": 0.652,
+    "unadjusted": 0.6405
+   },
+   {
+    "rank": 9,
+    "champion": "Olaf",
+    "xPresence": 0.6445,
+    "unadjusted": 0.6372
+   },
+   {
+    "rank": 10,
+    "champion": "Lee Sin",
+    "xPresence": 0.508,
+    "unadjusted": 0.497
+   },
+   {
+    "rank": 11,
+    "champion": "Ryze",
+    "xPresence": 0.4743,
+    "unadjusted": 0.4657
+   },
+   {
+    "rank": 12,
+    "champion": "Jayce",
+    "xPresence": 0.4733,
+    "unadjusted": 0.4645
+   },
+   {
+    "rank": 13,
+    "champion": "Lulu",
+    "xPresence": 0.4575,
+    "unadjusted": 0.447
+   },
+   {
+    "rank": 14,
+    "champion": "KSante",
+    "xPresence": 0.4005,
+    "unadjusted": 0.3932
+   },
+   {
+    "rank": 15,
+    "champion": "Syndra",
+    "xPresence": 0.393,
+    "unadjusted": 0.4607
+   },
+   {
+    "rank": 16,
+    "champion": "Yunara",
+    "xPresence": 0.374,
+    "unadjusted": 0.367
+   },
+   {
+    "rank": 17,
+    "champion": "Seraphine",
+    "xPresence": 0.3538,
+    "unadjusted": 0.409
+   },
+   {
+    "rank": 18,
+    "champion": "Pantheon",
+    "xPresence": 0.353,
+    "unadjusted": 0.3468
+   },
+   {
+    "rank": 19,
+    "champion": "Caitlyn",
+    "xPresence": 0.3468,
+    "unadjusted": 0.3382
+   },
+   {
+    "rank": 20,
+    "champion": "Akali",
+    "xPresence": 0.332,
+    "unadjusted": 0.3265
+   },
+   {
+    "rank": 21,
+    "champion": "Qiyana",
+    "xPresence": 0.3215,
+    "unadjusted": 0.3162
+   },
+   {
+    "rank": 22,
+    "champion": "Naafiri",
+    "xPresence": 0.2813,
+    "unadjusted": 0.2752
+   },
+   {
+    "rank": 23,
+    "champion": "Kalista",
+    "xPresence": 0.275,
+    "unadjusted": 0.2717
+   },
+   {
+    "rank": 24,
+    "champion": "Nautilus",
+    "xPresence": 0.2692,
+    "unadjusted": 0.3215
+   },
+   {
+    "rank": 25,
+    "champion": "Viktor",
+    "xPresence": 0.2662,
+    "unadjusted": 0.2615
+   },
+   {
+    "rank": 26,
+    "champion": "Milio",
+    "xPresence": 0.263,
+    "unadjusted": 0.2587
+   },
+   {
+    "rank": 27,
+    "champion": "Ambessa",
+    "xPresence": 0.2562,
+    "unadjusted": 0.2535
+   },
+   {
+    "rank": 28,
+    "champion": "Karma",
+    "xPresence": 0.233,
+    "unadjusted": 0.225
+   },
+   {
+    "rank": 29,
+    "champion": "Ashe",
+    "xPresence": 0.232,
+    "unadjusted": 0.2263
+   },
+   {
+    "rank": 30,
+    "champion": "Gnar",
+    "xPresence": 0.2308,
+    "unadjusted": 0.225
+   },
+   {
+    "rank": 31,
+    "champion": "Renata Glasc",
+    "xPresence": 0.2198,
+    "unadjusted": 0.215
+   },
+   {
+    "rank": 32,
+    "champion": "Wukong",
+    "xPresence": 0.1995,
+    "unadjusted": 0.196
+   },
+   {
+    "rank": 33,
+    "champion": "Rakan",
+    "xPresence": 0.1865,
+    "unadjusted": 0.1815
+   },
+   {
+    "rank": 34,
+    "champion": "Camille",
+    "xPresence": 0.1775,
+    "unadjusted": 0.1742
+   },
+   {
+    "rank": 35,
+    "champion": "Galio",
+    "xPresence": 0.1747,
+    "unadjusted": 0.1703
+   },
+   {
+    "rank": 36,
+    "champion": "Annie",
+    "xPresence": 0.1705,
+    "unadjusted": 0.1665
+   },
+   {
+    "rank": 37,
+    "champion": "Alistar",
+    "xPresence": 0.1673,
+    "unadjusted": 0.165
+   },
+   {
+    "rank": 38,
+    "champion": "Locke",
+    "xPresence": 0.163,
+    "unadjusted": 0.16
+   },
+   {
+    "rank": 39,
+    "champion": "Trundle",
+    "xPresence": 0.156,
+    "unadjusted": 0.1525
+   },
+   {
+    "rank": 40,
+    "champion": "Jhin",
+    "xPresence": 0.1532,
+    "unadjusted": 0.1495
+   },
+   {
+    "rank": 41,
+    "champion": "Xayah",
+    "xPresence": 0.1507,
+    "unadjusted": 0.147
+   },
+   {
+    "rank": 42,
+    "champion": "Bard",
+    "xPresence": 0.15,
+    "unadjusted": 0.178
+   },
+   {
+    "rank": 43,
+    "champion": "Twisted Fate",
+    "xPresence": 0.1497,
+    "unadjusted": 0.1467
+   },
+   {
+    "rank": 44,
+    "champion": "Sylas",
+    "xPresence": 0.1492,
+    "unadjusted": 0.1445
+   },
+   {
+    "rank": 45,
+    "champion": "Renekton",
+    "xPresence": 0.1475,
+    "unadjusted": 0.1445
+   },
+   {
+    "rank": 46,
+    "champion": "Skarner",
+    "xPresence": 0.1472,
+    "unadjusted": 0.1442
+   },
+   {
+    "rank": 47,
+    "champion": "Xin Zhao",
+    "xPresence": 0.1445,
+    "unadjusted": 0.1398
+   },
+   {
+    "rank": 48,
+    "champion": "Varus",
+    "xPresence": 0.1313,
+    "unadjusted": 0.1278
+   },
+   {
+    "rank": 49,
+    "champion": "Ahri",
+    "xPresence": 0.124,
+    "unadjusted": 0.1215
+   },
+   {
+    "rank": 50,
+    "champion": "Vayne",
+    "xPresence": 0.1177,
+    "unadjusted": 0.1153
+   },
+   {
+    "rank": 51,
+    "champion": "Ziggs",
+    "xPresence": 0.1042,
+    "unadjusted": 0.1015
+   },
+   {
+    "rank": 52,
+    "champion": "Maokai",
+    "xPresence": 0.0975,
+    "unadjusted": 0.0955
+   },
+   {
+    "rank": 53,
+    "champion": "Poppy",
+    "xPresence": 0.0955,
+    "unadjusted": 0.114
+   },
+   {
+    "rank": 54,
+    "champion": "Chogath",
+    "xPresence": 0.0915,
+    "unadjusted": 0.0875
+   },
+   {
+    "rank": 55,
+    "champion": "Yone",
+    "xPresence": 0.09,
+    "unadjusted": 0.0877
+   },
+   {
+    "rank": 56,
+    "champion": "Anivia",
+    "xPresence": 0.0897,
+    "unadjusted": 0.0882
+   },
+   {
+    "rank": 57,
+    "champion": "Gwen",
+    "xPresence": 0.0772,
+    "unadjusted": 0.0752
+   },
+   {
+    "rank": 58,
+    "champion": "Rell",
+    "xPresence": 0.076,
+    "unadjusted": 0.074
+   },
+   {
+    "rank": 59,
+    "champion": "Kaisa",
+    "xPresence": 0.075,
+    "unadjusted": 0.0745
+   },
+   {
+    "rank": 60,
+    "champion": "Shyvana",
+    "xPresence": 0.0745,
+    "unadjusted": 0.0737
+   },
+   {
+    "rank": 61,
+    "champion": "Taliyah",
+    "xPresence": 0.0715,
+    "unadjusted": 0.0695
+   },
+   {
+    "rank": 62,
+    "champion": "Zeri",
+    "xPresence": 0.0695,
+    "unadjusted": 0.0855
+   },
+   {
+    "rank": 63,
+    "champion": "Sivir",
+    "xPresence": 0.0683,
+    "unadjusted": 0.067
+   },
+   {
+    "rank": 64,
+    "champion": "Jax",
+    "xPresence": 0.0648,
+    "unadjusted": 0.0638
+   },
+   {
+    "rank": 65,
+    "champion": "Corki",
+    "xPresence": 0.0643,
+    "unadjusted": 0.0638
+   },
+   {
+    "rank": 66,
+    "champion": "Miss Fortune",
+    "xPresence": 0.0638,
+    "unadjusted": 0.0617
+   },
+   {
+    "rank": 67,
+    "champion": "Neeko",
+    "xPresence": 0.062,
+    "unadjusted": 0.0612
+   },
+   {
+    "rank": 68,
+    "champion": "Lissandra",
+    "xPresence": 0.0605,
+    "unadjusted": 0.059
+   },
+   {
+    "rank": 69,
+    "champion": "Yorick",
+    "xPresence": 0.0568,
+    "unadjusted": 0.0563
+   },
+   {
+    "rank": 70,
+    "champion": "Shen",
+    "xPresence": 0.056,
+    "unadjusted": 0.0545
+   },
+   {
+    "rank": 71,
+    "champion": "Tristana",
+    "xPresence": 0.0558,
+    "unadjusted": 0.055
+   },
+   {
+    "rank": 72,
+    "champion": "LeBlanc",
+    "xPresence": 0.0558,
+    "unadjusted": 0.0537
+   },
+   {
+    "rank": 73,
+    "champion": "Aurora",
+    "xPresence": 0.0555,
+    "unadjusted": 0.045
+   },
+   {
+    "rank": 74,
+    "champion": "Ornn",
+    "xPresence": 0.0545,
+    "unadjusted": 0.053
+   },
+   {
+    "rank": 75,
+    "champion": "Sion",
+    "xPresence": 0.0525,
+    "unadjusted": 0.0503
+   },
+   {
+    "rank": 76,
+    "champion": "Kled",
+    "xPresence": 0.0495,
+    "unadjusted": 0.0493
+   },
+   {
+    "rank": 77,
+    "champion": "Jinx",
+    "xPresence": 0.047,
+    "unadjusted": 0.0465
+   },
+   {
+    "rank": 78,
+    "champion": "Leona",
+    "xPresence": 0.0447,
+    "unadjusted": 0.0442
+   },
+   {
+    "rank": 79,
+    "champion": "Thresh",
+    "xPresence": 0.043,
+    "unadjusted": 0.041
+   },
+   {
+    "rank": 80,
+    "champion": "Kennen",
+    "xPresence": 0.0413,
+    "unadjusted": 0.041
+   },
+   {
+    "rank": 81,
+    "champion": "Aatrox",
+    "xPresence": 0.0398,
+    "unadjusted": 0.031
+   },
+   {
+    "rank": 82,
+    "champion": "Sejuani",
+    "xPresence": 0.0367,
+    "unadjusted": 0.0367
+   },
+   {
+    "rank": 83,
+    "champion": "Mel",
+    "xPresence": 0.0335,
+    "unadjusted": 0.0335
+   },
+   {
+    "rank": 84,
+    "champion": "Azir",
+    "xPresence": 0.033,
+    "unadjusted": 0.0325
+   },
+   {
+    "rank": 85,
+    "champion": "Dr. Mundo",
+    "xPresence": 0.033,
+    "unadjusted": 0.0325
+   },
+   {
+    "rank": 86,
+    "champion": "Aphelios",
+    "xPresence": 0.033,
+    "unadjusted": 0.0253
+   },
+   {
+    "rank": 87,
+    "champion": "Zaahen",
+    "xPresence": 0.0323,
+    "unadjusted": 0.032
+   },
+   {
+    "rank": 88,
+    "champion": "Volibear",
+    "xPresence": 0.0318,
+    "unadjusted": 0.0313
+   },
+   {
+    "rank": 89,
+    "champion": "Gragas",
+    "xPresence": 0.0302,
+    "unadjusted": 0.03
+   },
+   {
+    "rank": 90,
+    "champion": "Hwei",
+    "xPresence": 0.0285,
+    "unadjusted": 0.0275
+   },
+   {
+    "rank": 91,
+    "champion": "Yuumi",
+    "xPresence": 0.028,
+    "unadjusted": 0.0275
+   },
+   {
+    "rank": 92,
+    "champion": "Ivern",
+    "xPresence": 0.0267,
+    "unadjusted": 0.0262
+   },
+   {
+    "rank": 93,
+    "champion": "Nidalee",
+    "xPresence": 0.024,
+    "unadjusted": 0.0232
+   },
+   {
+    "rank": 94,
+    "champion": "Amumu",
+    "xPresence": 0.0217,
+    "unadjusted": 0.0205
+   },
+   {
+    "rank": 95,
+    "champion": "KhaZix",
+    "xPresence": 0.019,
+    "unadjusted": 0.0158
+   },
+   {
+    "rank": 96,
+    "champion": "Braum",
+    "xPresence": 0.0165,
+    "unadjusted": 0.0158
+   },
+   {
+    "rank": 97,
+    "champion": "Malphite",
+    "xPresence": 0.0163,
+    "unadjusted": 0.0163
+   },
+   {
+    "rank": 98,
+    "champion": "Draven",
+    "xPresence": 0.0158,
+    "unadjusted": 0.0118
+   },
+   {
+    "rank": 99,
+    "champion": "Lux",
+    "xPresence": 0.0147,
+    "unadjusted": 0.0145
+   },
+   {
+    "rank": 100,
+    "champion": "Pyke",
+    "xPresence": 0.014,
+    "unadjusted": 0.0135
+   },
+   {
+    "rank": 101,
+    "champion": "Blitzcrank",
+    "xPresence": 0.012,
+    "unadjusted": 0.0112
+   },
+   {
+    "rank": 102,
+    "champion": "Tahm Kench",
+    "xPresence": 0.0118,
+    "unadjusted": 0.0115
+   },
+   {
+    "rank": 103,
+    "champion": "Diana",
+    "xPresence": 0.0107,
+    "unadjusted": 0.0105
+   },
+   {
+    "rank": 104,
+    "champion": "Zoe",
+    "xPresence": 0.0103,
+    "unadjusted": 0.0097
+   },
+   {
+    "rank": 105,
+    "champion": "Udyr",
+    "xPresence": 0.01,
+    "unadjusted": 0.0097
+   },
+   {
+    "rank": 106,
+    "champion": "Fiora",
+    "xPresence": 0.01,
+    "unadjusted": 0.007
+   },
+   {
+    "rank": 107,
+    "champion": "Elise",
+    "xPresence": 0.0097,
+    "unadjusted": 0.0077
+   },
+   {
+    "rank": 108,
+    "champion": "Gangplank",
+    "xPresence": 0.009,
+    "unadjusted": 0.009
+   },
+   {
+    "rank": 109,
+    "champion": "Swain",
+    "xPresence": 0.009,
+    "unadjusted": 0.009
+   },
+   {
+    "rank": 110,
+    "champion": "Zed",
+    "xPresence": 0.0088,
+    "unadjusted": 0.0088
+   },
+   {
+    "rank": 111,
+    "champion": "Nasus",
+    "xPresence": 0.0088,
+    "unadjusted": 0.0118
+   },
+   {
+    "rank": 112,
+    "champion": "Mordekaiser",
+    "xPresence": 0.0085,
+    "unadjusted": 0.0083
+   },
+   {
+    "rank": 113,
+    "champion": "Hecarim",
+    "xPresence": 0.0085,
+    "unadjusted": 0.0085
+   },
+   {
+    "rank": 114,
+    "champion": "Nami",
+    "xPresence": 0.0085,
+    "unadjusted": 0.0083
+   },
+   {
+    "rank": 115,
+    "champion": "Xerath",
+    "xPresence": 0.0085,
+    "unadjusted": 0.0085
+   },
+   {
+    "rank": 116,
+    "champion": "Senna",
+    "xPresence": 0.0085,
+    "unadjusted": 0.0083
+   },
+   {
+    "rank": 117,
+    "champion": "Kindred",
+    "xPresence": 0.0083,
+    "unadjusted": 0.008
+   },
+   {
+    "rank": 118,
+    "champion": "Taric",
+    "xPresence": 0.008,
+    "unadjusted": 0.0077
+   },
+   {
+    "rank": 119,
+    "champion": "Aurelion Sol",
+    "xPresence": 0.008,
+    "unadjusted": 0.008
+   },
+   {
+    "rank": 120,
+    "champion": "Irelia",
+    "xPresence": 0.0077,
+    "unadjusted": 0.0075
+   },
+   {
+    "rank": 121,
+    "champion": "Soraka",
+    "xPresence": 0.0077,
+    "unadjusted": 0.0075
+   },
+   {
+    "rank": 122,
+    "champion": "Kayn",
+    "xPresence": 0.0077,
+    "unadjusted": 0.0077
+   },
+   {
+    "rank": 123,
+    "champion": "Samira",
+    "xPresence": 0.0077,
+    "unadjusted": 0.0075
+   },
+   {
+    "rank": 124,
+    "champion": "KogMaw",
+    "xPresence": 0.0075,
+    "unadjusted": 0.0073
+   },
+   {
+    "rank": 125,
+    "champion": "Vladimir",
+    "xPresence": 0.0073,
+    "unadjusted": 0.0073
+   },
+   {
+    "rank": 126,
+    "champion": "Yasuo",
+    "xPresence": 0.007,
+    "unadjusted": 0.007
+   },
+   {
+    "rank": 127,
+    "champion": "Vex",
+    "xPresence": 0.0067,
+    "unadjusted": 0.0063
+   },
+   {
+    "rank": 128,
+    "champion": "Graves",
+    "xPresence": 0.0067,
+    "unadjusted": 0.0067
+   },
+   {
+    "rank": 129,
+    "champion": "Tryndamere",
+    "xPresence": 0.0067,
+    "unadjusted": 0.0067
+   },
+   {
+    "rank": 130,
+    "champion": "Sett",
+    "xPresence": 0.0067,
+    "unadjusted": 0.0065
+   },
+   {
+    "rank": 131,
+    "champion": "Urgot",
+    "xPresence": 0.0063,
+    "unadjusted": 0.0063
+   },
+   {
+    "rank": 132,
+    "champion": "Zyra",
+    "xPresence": 0.0057,
+    "unadjusted": 0.0057
+   },
+   {
+    "rank": 133,
+    "champion": "Garen",
+    "xPresence": 0.0057,
+    "unadjusted": 0.006
+   },
+   {
+    "rank": 134,
+    "champion": "Warwick",
+    "xPresence": 0.0055,
+    "unadjusted": 0.0055
+   },
+   {
+    "rank": 135,
+    "champion": "VelKoz",
+    "xPresence": 0.0053,
+    "unadjusted": 0.0053
+   },
+   {
+    "rank": 136,
+    "champion": "Belveth",
+    "xPresence": 0.0047,
+    "unadjusted": 0.0047
+   }
+  ]
+ },
+ "ranking_note": "rankings list every champion drafted this summer",
+ "scoring": [
+  "Per draft action likelihood vs gol.gg PrioScore built from the same training data, all Demacia Cup games, with a 90% range from resampling series",
+  "Main vs comparison model, same metric",
+  "Game 1 accuracy: predicted xPresence vs picked-or-banned rate",
+  "Top-10 hit rate: of each list's top 10, how many are picked or banned in the average Game 1",
+  "Data: Oracle's Elixir if it covers the event, otherwise gol.gg"
+ ]
+}
