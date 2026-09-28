@@ -58,7 +58,7 @@ The Evidence tab on the dashboard has every test, chart and number.
 
 ## Data
 
-- **[Oracle's Elixir](https://oracleselixir.com/)**: 2025 and 2026 match data for picks, bans, draft order, first pick, sides and roles.
+- **[Oracle's Elixir](https://oracleselixir.com/)** (Tim Sevenhuysen): 2025 and 2026 match data for picks, bans, draft order, first pick, sides and roles.
   - The dashboard uses 762 games from the 2026 post-MSI splits of LCK, LPL, LEC, LCS, CBLOL and LCP.
 - **[gol.gg](https://gol.gg/):** 13 games Oracle's Elixir didn't have yet (LPL Regional Finals and one LPL game), and the PrioScore rule used for comparison.
 - **[LoLalytics](https://lolalytics.com/):** Diamond+ solo-queue win-rate shifts, used only in the patch-notes test.
