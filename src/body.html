@@ -32,7 +32,7 @@
       <div class="card-hd"><h2>Top 20 by xPresence</h2>
         <div class="legend"><span><i style="background:var(--accent)"></i>xPresence</span><span><i style="background:var(--accent-band)"></i>80% range</span><span><i style="background:var(--mix);width:9px;height:9px;transform:rotate(45deg)"></i>Patch-adjusted</span><span id="band-status" class="status"></span></div>
       </div>
-      <p class="explain"><b>xPresence (expected presence)</b> is the chance a champion gets picked or banned in a fresh Game 1 draft. Regular presence just counts how often a champion was picked or banned. xPresence estimates that rate from every real pick and ban, giving credit each time a team took the champion while other options were still available. It adjusts for fearless, so a champion used earlier in a series isn't penalized for being unavailable later, and recent games count more: a game loses half its weight every 5 days. <b>Patch-adjusted</b> goes one step further and nudges champions changed in the patches since this data (16.18 and 16.19) up for each buff and down for each nerf.</p>
+      <p class="explain"><b>xPresence (expected presence)</b> is the chance a champion gets picked or banned in a fresh Game 1 draft. Regular presence just counts how often a champion was picked or banned. xPresence estimates that rate from every real pick and ban, giving credit each time a team took the champion while other options were still available. It adjusts for fearless, so a champion used earlier in a series isn't penalized for being unavailable later, and recent games count more: a game loses half its weight every 5 days. <b>Patch-adjusted</b> goes one step further and nudges champions changed in the patches since this data (16.18, 16.19 and the Worlds patch, 16.20) up for each buff and down for each nerf.</p>
       <div class="chart" id="chart"></div>
       <details class="chart-data" id="chart-data"><summary>Show this chart as a table</summary><div class="tscroll"><table id="chart-tbl" aria-label="Top 20 by xPresence"></table></div></details>
       <p class="note">The shaded range shows how much the number moves when the series are resampled. Where two champions' ranges overlap, treat them as tied. On the right, gol.gg's PrioScore rank for comparison.</p>
@@ -186,7 +186,7 @@
         <li>A Plackett–Luce model fits one strength per champion that best explains all 15,000+ choices. Taking a champion while strong options remain counts for more than taking it from a thin pool, so draft order and fearless are built in without hand-set weights.</li>
         <li>xPresence turns strength into a plain number: the share of 3,000 simulated fresh Game 1 drafts in which the champion is picked or banned.</li>
         <li>Each game is weighted by recency: it loses half its weight every 5 days before the latest game. Until Sep 26 this was 10 days, with deciding games counted 1.5×; the rolling tests showed 5 days does better and deciding games make no difference.</li>
-        <li>Patch-adjusted multiplies a champion's strength by 1.25 for each buff and divides it by 1.25 for each nerf in patches released after the data (currently 16.18 and 16.19; the Worlds patch, 16.20, is due Oct 7). Champions no team drafted this summer have no strength to adjust, so a buff can't lift them onto the list. Unchanged champions shift slightly too, because a nerf to one champion frees up draft slots for everyone else.</li>
+        <li>Patch-adjusted multiplies a champion's strength by 1.25 for each buff and divides it by 1.25 for each nerf in patches released after the data (16.18, 16.19 and the Worlds patch, 16.20). Champions no team drafted this summer have no strength to adjust, so a buff can't lift them onto the list. Unchanged champions shift slightly too, because a nerf to one champion frees up draft slots for everyone else.</li>
         <li>The 80% range comes from refitting the model on 40 resamples of whole series.</li>
       </ul>
     </div>
@@ -202,7 +202,7 @@
 
     <div class="card snap">
       <h2>Worlds baseline, frozen Sep 26 (5-day)</h2>
-      <p class="note">All six leagues, all 775 games, with the current settings: 5-day half-life, no deciding-game weight. Fixed so it can be checked against Worlds 2026 drafts after the final on Nov 14. The earlier 10-day version is kept in the page for the same comparison. The patch-adjusted list will be updated once when the Worlds patch notes (16.20) are out, before Worlds starts.</p>
+      <p class="note">All six leagues, all 775 games, with the current settings: 5-day half-life, no deciding-game weight. Fixed so it can be checked against Worlds 2026 drafts after the final on Nov 14. The earlier 10-day version is kept in the page for the same comparison. The patch-adjusted list was updated once on Oct 8, with the Worlds patch (16.20); nothing else changes. How it will be scored is set out in the <a href="https://github.com/saffinest/xPresence/blob/main/data/worlds-test-plan-2026.md">Worlds 2026 test plan</a>, fixed before Worlds starts.</p>
       <div class="two">
         <div><span class="lab">xPresence</span><ol id="snap-pl"></ol></div>
         <div><span class="lab">Patch-adjusted</span><ol id="snap-mix"></ol></div>

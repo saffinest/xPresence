@@ -55,7 +55,8 @@ The Evidence tab on the dashboard has every test, chart and number.
 ### Worlds 2026 check
 
 - **Baseline frozen before Worlds:** `data/snapshot5.json`, with settings as of Sep 26, 2026.
-- **The patch-adjusted list will be updated once** when the Worlds patch notes (16.20) are out, before the event starts.
+- **The patch-adjusted list was updated once,** on Oct 8, with the Worlds patch (16.20). Nothing else in the baseline changes.
+- **Test plan:** [`data/worlds-test-plan-2026.md`](data/worlds-test-plan-2026.md) sets out the models, games, data, metrics and what counts as a pass. It is fixed before Worlds starts on Oct 15.
 - **Results will be posted after the final** on Nov 14, whether good or bad.
 
 ## Data

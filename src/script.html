@@ -75,7 +75,7 @@ const PRIOREC = /*PRIOREC*/; // PrioScore with the same recency weighting (analy
   $('seg-pt').innerHTML = `<button data-v="all">All patches</button><button data-v="${LATEST[1]}">Latest only (${LATEST[0]})</button>`;
   { const md = Math.max(...P.games.map(g=>g.day)), dt = new Date(Date.UTC(2026,6,1+md));
     const mo = dt.toLocaleString('en-US',{month:'short',timeZone:'UTC'});
-    $('dataline').textContent = `Data through ${mo} ${dt.getUTCDate()} · Oracle's Elixir · patches ${ptOrder[0][0]}–${LATEST[0]} · adjusted for ${PATCH.patches.join('–')}`; }
+    $('dataline').textContent = `Data through ${mo} ${dt.getUTCDate()} · Oracle's Elixir · patches ${ptOrder[0][0]}–${LATEST[0]} · adjusted for ${PATCH.patches.length > 1 ? PATCH.patches[0] + '–' + PATCH.patches[PATCH.patches.length-1] : PATCH.patches[0]}`; }
   function syncControls(){
     document.querySelectorAll('#seg-lg button').forEach(b=>b.setAttribute('aria-pressed', state.lgs.includes(+b.dataset.v)));
     document.querySelectorAll('#seg-st button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===String(state.st)));
@@ -218,7 +218,7 @@ onmessage = e => {
         <span>Average first-pick game</span><span>${r.first==null?'–':r.first.toFixed(2)}</span>
         <span>Picks in deciding games</span><span>${r.dec}</span></div></div>
       <div><h3>Rank by league</h3><div class="kv">${lg}</div>
-        <h3 style="margin-top:12px">Patch notes since this data</h3><p class="note">${ADJ_NOTES[r.c] ? ADJ_NOTES[r.c].join('; ') : 'No changes in ' + PATCH.patches.join(' or ') + '.'}</p></div></div>`;
+        <h3 style="margin-top:12px">Patch notes since this data</h3><p class="note">${ADJ_NOTES[r.c] ? ADJ_NOTES[r.c].join('; ') : 'No changes in ' + (PATCH.patches.length > 1 ? PATCH.patches.slice(0,-1).join(', ') + ' or ' + PATCH.patches[PATCH.patches.length-1] : PATCH.patches[0]) + '.'}</p></div></div>`;
   }
   // keyboard focus lands on this sentence: VoiceOver reads a focused region's name only, but reads focused text in full
   const detailSummary = r => `${r.name}: ${SAY} ${pct(r.take)}%${r.band?`, 80% range ${pct(r.band[0],0)} to ${pct(r.band[1],0)}%`:''}. Rank ${r.pri} here, ${r.gol} on gol.gg. ${r.p} picks and ${r.b} bans${r.wr==null?'':`, ${pct(r.wr,0)}% win rate when picked`}. Roles: ${roleText(r.c).replace(/ · /g, ', ')}. The full breakdown follows.`;

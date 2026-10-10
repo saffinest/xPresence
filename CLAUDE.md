@@ -80,13 +80,14 @@ Read this first. It carries the project's decisions and history from earlier ses
 
 These are public, pre-registered predictions. Changing them after the fact defeats their purpose.
 
-- **`data/snapshot5.json`:** Worlds 2026 baseline, frozen Sep 26 (5-day half-life). **One planned exception:** the patch-adjusted list gets updated once with the 16.20 (Worlds patch) changes, after the notes come out on Oct 7 and before Worlds starts on Oct 15. Record that update in the file's `version` field.
+- **`data/snapshot5.json`:** Worlds 2026 baseline, frozen Sep 26 (5-day half-life). The one planned exception is done: on Oct 8 the patch-adjusted list (`plTakeAdj`) was updated with the 16.20 (Worlds patch) changes, recorded in `version` and `patchUpdate`; the earlier list is kept as `plTakeAdj_16_19`. No further changes.
 - **`data/snapshot3.json`:** the earlier 10-day baseline, kept for comparison.
+- **`data/worlds-test-plan-2026.md`:** the Worlds 2026 test plan (models, games, data, metrics, what counts as a pass). Never edit after Oct 15.
 - **`data/demacia-baseline-2026-09-27.json`:** Demacia Cup Global Invitational (Oct 3–17). It has a main model (same as the Worlds baseline) and a field-weighted comparison model, plus the scoring plan.
 
 ## Checkpoints
 
-- **Oct 8:**
+- **Oct 8** (done Oct 8–9; the test plan leaves out the per-role correction, field weighting and prior strength, see its "Not in this test" section):
   - Add the 16.20 buffs and nerfs to `patch_adj.json` using the rubric (small: 1–2 minor numbers; medium: several numbers or one 10–25% change; large: many changes, over 25%, or new mechanics).
   - Update the Worlds patch-adjusted list once.
   - Freeze the Worlds test plan: models (include the per-role correction, field weighting and prior strength as comparisons), metrics, data source, and what counts as a win.
@@ -129,3 +130,6 @@ These are public, pre-registered predictions. Changing them after the fact defea
   - Playwright isn't installed on this Mac; the page checks were run in the Claude Code in-app browser.
   - Commit identity set to saffirephire with the noreply email; the 14 earlier commits were rewritten to match and force-pushed (the Demacia freeze commit is now `b3672ad`, date unchanged).
   - Added the "Is it just recency?" test: PrioScore with the same recency weighting (`analysis/prio_recency.js`, `data/prio_recency.json`), a results-table row and a details section on the Evidence tab. The owner chose to score xPresence with β = 1 there, to match the rest of the page.
+- **Oct 9:**
+  - Applied the 16.20 Worlds patch: `patch_adj.json` (16 changes for 16.20), `init5.json` (`takeAdj` only) and `snapshot5.json` (`plTakeAdj` only; `plTake` and every other field unchanged). Checked before copying: the 16.18–16.19 entries and the old list (now `plTakeAdj_16_19`) are identical. Patch-adjusted now shows Lucian 67.5%, K'Sante 29.4%, Yunara 28.8%, Cassiopeia 97.4%. Page text says "16.18, 16.19 and the Worlds patch, 16.20"; the data line says "adjusted for 16.18–16.20".
+  - Added the Worlds test plan as `data/worlds-test-plan-2026.md` (frozen after Oct 15), linked from the README's Worlds section and the About tab's Worlds baseline note (the baseline note lives on About, not Evidence).
