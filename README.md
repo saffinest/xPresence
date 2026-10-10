@@ -48,7 +48,7 @@ Every test builds xPresence from earlier games only, then scores how likely it f
   - Sizing patch changes by tier or by solo-queue win-rate shift: no better than a flat ×1.25.
 - **Roles.** Knowing which roles each team still needs predicts the next pick or ban about 40% better. It doesn't improve the Game 1 take rate itself, so xPresence ignores roles.
   - Supports are taken more often than xPresence expects.
-  - A per-role correction helped in 22 of 31 tests and is a comparison model for Worlds.
+  - A per-role correction helped in 22 of 31 tests. It was tested but not adopted, and it isn't part of the Worlds test.
 
 The Evidence tab on the dashboard has every test, chart and number.
 

@@ -71,14 +71,14 @@ Read this first. It carries the project's decisions and history from earlier ses
 - **Roles** (`rolerun.js`, `rolebias.js`, `rolecal.js`):
   - Role-aware choice sets predict the next action +41% better, but Game 1 take rates don't improve (won 7 of 31).
   - Supports are under-predicted (3.3 expected vs 3.8 taken per Game 1).
-  - A per-role correction won 22 of 31 (−0.45% log-loss). Not adopted; it's a comparison model.
-- **Field weighting** (`field_test.js`): counting the event's own teams ×2 won 5 of 5 international events (+1.7%).
+  - A per-role correction won 22 of 31 (−0.45% log-loss). Tested, not adopted, and not part of the Worlds test (see the frozen plan). May be revisited in the off-season.
+- **Field weighting** (`field_test.js`): counting the event's own teams ×2 won 5 of 5 international events (+1.7%). Tested only at the Demacia Cup (scored Oct 19); not part of the Worlds test.
   - About half of that is a weaker prior: counting every game ×2 gave +0.8%.
   - The field-specific part won 4 of 5.
 
 ## Frozen predictions: never edit
 
-These are public, pre-registered predictions. Changing them after the fact defeats their purpose.
+These are public, pre-registered predictions. Changing them after the fact defeats their purpose. If any other text (page, README, this file) disagrees with `data/worlds-test-plan-2026.md`, the plan wins: fix the other text, never the plan.
 
 - **`data/snapshot5.json`:** Worlds 2026 baseline, frozen Sep 26 (5-day half-life). The one planned exception is done: on Oct 8 the patch-adjusted list (`plTakeAdj`) was updated with the 16.20 (Worlds patch) changes, recorded in `version` and `patchUpdate`; the earlier list is kept as `plTakeAdj_16_19`. No further changes.
 - **`data/snapshot3.json`:** the earlier 10-day baseline, kept for comparison.
@@ -87,7 +87,7 @@ These are public, pre-registered predictions. Changing them after the fact defea
 
 ## Checkpoints
 
-- **Oct 8** (done Oct 8–9; the test plan leaves out the per-role correction, field weighting and prior strength, see its "Not in this test" section):
+- **Oct 8** (done Oct 8–9). The final plan, frozen Oct 9, left out the per-role correction, field weighting and the patch-sizing variants by the owner's choice; the checklist below is the original intent, kept for the record:
   - Add the 16.20 buffs and nerfs to `patch_adj.json` using the rubric (small: 1–2 minor numbers; medium: several numbers or one 10–25% change; large: many changes, over 25%, or new mechanics).
   - Update the Worlds patch-adjusted list once.
   - Freeze the Worlds test plan: models (include the per-role correction, field weighting and prior strength as comparisons), metrics, data source, and what counts as a win.
@@ -133,3 +133,4 @@ These are public, pre-registered predictions. Changing them after the fact defea
 - **Oct 9:**
   - Applied the 16.20 Worlds patch: `patch_adj.json` (16 changes for 16.20), `init5.json` (`takeAdj` only) and `snapshot5.json` (`plTakeAdj` only; `plTake` and every other field unchanged). Checked before copying: the 16.18–16.19 entries and the old list (now `plTakeAdj_16_19`) are identical. Patch-adjusted now shows Lucian 67.5%, K'Sante 29.4%, Yunara 28.8%, Cassiopeia 97.4%. Page text says "16.18, 16.19 and the Worlds patch, 16.20"; the data line says "adjusted for 16.18–16.20".
   - Added the Worlds test plan as `data/worlds-test-plan-2026.md` (frozen after Oct 15), linked from the README's Worlds section and the About tab's Worlds baseline note (the baseline note lives on About, not Evidence).
+  - Brought the page, README and this file in line with the plan: the per-role correction is "not adopted" (Evidence badge and role-section text) and isn't part of the Worlds test; field weighting is tested only at the Demacia Cup.
