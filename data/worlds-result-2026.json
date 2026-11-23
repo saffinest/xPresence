@@ -1,0 +1,671 @@
+{
+ "plan": "data/worlds-test-plan-2026.md (frozen Oct 9, 2026)",
+ "games": 98,
+ "series": 46,
+ "actions": 1960,
+ "newChampions": [
+  "Lillia",
+  "Twitch"
+ ],
+ "unseenRule": "Champions not in a frozen snapshot get that snapshot's weakest strength; baselines use the +0.01 floor from the rolling tests.",
+ "dataNotes": {
+  "dropped_duplicates": [],
+  "repeat_picks_in_series": [],
+  "games_missing_picks": [],
+  "unknownFirstPick": 0
+ },
+ "models": {
+  "xp_adj": {
+   "name": "Patch-adjusted xPresence (main)",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.14535963932591023,
+    "lo": 0.12062031698837794,
+    "hi": 0.17344616180884365,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.012618143983147867,
+    "lo": -0.000207744054421255,
+    "hi": 0.028224374088751114,
+    "actions": 1960,
+    "series": 46
+   },
+   "fittedBeta": {
+    "beta": 1.303,
+    "vsGol": {
+     "point": 0.12872029331526735,
+     "lo": 0.095068738323842,
+     "hi": 0.17048805445295123,
+     "actions": 1960,
+     "series": 46
+    }
+   },
+   "rankCorr": 0.913,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Lucian",
+     "Ezreal",
+     "Olaf",
+     "Rumble",
+     "Lee Sin"
+    ],
+    "perGame1": 6.96
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 2760,
+     "predicted": 0.021,
+     "actual": 0.007
+    },
+    {
+     "range": "5-15%",
+     "n": 1564,
+     "predicted": 0.088,
+     "actual": 0.067
+    },
+    {
+     "range": "15-30%",
+     "n": 1150,
+     "predicted": 0.209,
+     "actual": 0.266
+    },
+    {
+     "range": "30-50%",
+     "n": 460,
+     "predicted": 0.391,
+     "actual": 0.441
+    },
+    {
+     "range": "50-70%",
+     "n": 184,
+     "predicted": 0.643,
+     "actual": 0.565
+    },
+    {
+     "range": "70-90%",
+     "n": 184,
+     "predicted": 0.764,
+     "actual": 0.777
+    },
+    {
+     "range": "90-100%",
+     "n": 46,
+     "predicted": 0.974,
+     "actual": 0.891
+    }
+   ]
+  },
+  "xp5": {
+   "name": "xPresence, unadjusted (5-day)",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.16915837064636685,
+    "lo": 0.14178936983617674,
+    "hi": 0.19890174399373195,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.033658720507266926,
+    "lo": 0.021731320430091294,
+    "hi": 0.049461362708777656,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.908,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Olaf",
+     "Rumble",
+     "Lucian",
+     "Lee Sin"
+    ],
+    "perGame1": 6.96
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 2806,
+     "predicted": 0.02,
+     "actual": 0.006
+    },
+    {
+     "range": "5-15%",
+     "n": 1610,
+     "predicted": 0.09,
+     "actual": 0.072
+    },
+    {
+     "range": "15-30%",
+     "n": 966,
+     "predicted": 0.21,
+     "actual": 0.278
+    },
+    {
+     "range": "30-50%",
+     "n": 552,
+     "predicted": 0.388,
+     "actual": 0.415
+    },
+    {
+     "range": "50-70%",
+     "n": 230,
+     "predicted": 0.628,
+     "actual": 0.565
+    },
+    {
+     "range": "70-90%",
+     "n": 92,
+     "predicted": 0.77,
+     "actual": 0.783
+    },
+    {
+     "range": "90-100%",
+     "n": 92,
+     "predicted": 0.95,
+     "actual": 0.935
+    }
+   ]
+  },
+  "xp10": {
+   "name": "Old 10-day baseline",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.14503175746783636,
+    "lo": 0.11859343995935956,
+    "hi": 0.17352791561759595,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.01232826200445003,
+    "lo": -0.0014427320167130775,
+    "hi": 0.028688830384449915,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.91,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Lucian",
+     "Olaf",
+     "Rumble",
+     "Ryze"
+    ],
+    "perGame1": 6.33
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 3128,
+     "predicted": 0.015,
+     "actual": 0.011
+    },
+    {
+     "range": "5-15%",
+     "n": 1242,
+     "predicted": 0.095,
+     "actual": 0.091
+    },
+    {
+     "range": "15-30%",
+     "n": 1012,
+     "predicted": 0.207,
+     "actual": 0.256
+    },
+    {
+     "range": "30-50%",
+     "n": 506,
+     "predicted": 0.388,
+     "actual": 0.439
+    },
+    {
+     "range": "50-70%",
+     "n": 184,
+     "predicted": 0.601,
+     "actual": 0.391
+    },
+    {
+     "range": "70-90%",
+     "n": 138,
+     "predicted": 0.772,
+     "actual": 0.638
+    },
+    {
+     "range": "90-100%",
+     "n": 138,
+     "predicted": 0.946,
+     "actual": 0.949
+    }
+   ]
+  },
+  "gol": {
+   "name": "gol.gg's PrioScore",
+   "beta": 1.324,
+   "vsGol": null,
+   "vsGolRec": {
+    "point": -0.11589503487383757,
+    "lo": -0.13964581687704636,
+    "hi": -0.09079829321734079,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.885,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Ezreal",
+     "Poppy",
+     "Lucian",
+     "Jarvan IV",
+     "Jayce",
+     "Akali"
+    ],
+    "perGame1": 5.98
+   }
+  },
+  "gol_rec5": {
+   "name": "PrioScore with 5-day recency",
+   "beta": 1.667,
+   "vsGol": {
+    "point": 0.13108741546010805,
+    "lo": 0.10266195118994825,
+    "hi": 0.16347704174948374,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": null,
+   "rankCorr": 0.9,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Olaf",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Akali",
+     "Lucian",
+     "Lee Sin"
+    ],
+    "perGame1": 6.78
+   }
+  },
+  "presence": {
+   "name": "Presence",
+   "beta": 1.446,
+   "vsGol": {
+    "point": 0.010003729505759784,
+    "lo": 0.0023897346786985185,
+    "hi": 0.016424919951805173,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": -0.1070506879480162,
+    "lo": -0.13180945883933481,
+    "hi": -0.08263900444650962,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.886,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Orianna",
+     "Vi",
+     "Ezreal",
+     "Poppy",
+     "Jayce",
+     "Lucian",
+     "Jarvan IV",
+     "Akali"
+    ],
+    "perGame1": 5.98
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 3128,
+     "predicted": 0.014,
+     "actual": 0.011
+    },
+    {
+     "range": "5-15%",
+     "n": 1012,
+     "predicted": 0.109,
+     "actual": 0.161
+    },
+    {
+     "range": "15-30%",
+     "n": 1104,
+     "predicted": 0.212,
+     "actual": 0.192
+    },
+    {
+     "range": "30-50%",
+     "n": 690,
+     "predicted": 0.4,
+     "actual": 0.377
+    },
+    {
+     "range": "50-70%",
+     "n": 322,
+     "predicted": 0.576,
+     "actual": 0.516
+    },
+    {
+     "range": "70-90%",
+     "n": 92,
+     "predicted": 0.762,
+     "actual": 0.935
+    }
+   ]
+  }
+ },
+ "stages": {
+  "Play-In": {
+   "games": 22,
+   "models": {
+    "xp_adj": {
+     "point": 0.13109405119321282,
+     "lo": 0.09510112189631714,
+     "hi": 0.17526449051874682,
+     "actions": 440,
+     "series": 6
+    },
+    "xp5": {
+     "point": 0.13468520280469654,
+     "lo": 0.09516692292887363,
+     "hi": 0.18897624388659162,
+     "actions": 440,
+     "series": 6
+    },
+    "xp10": {
+     "point": 0.08458634108484153,
+     "lo": 0.04966645016928095,
+     "hi": 0.133702304714862,
+     "actions": 440,
+     "series": 6
+    },
+    "gol_rec5": {
+     "point": 0.06731031745730043,
+     "lo": 0.028003282170169008,
+     "hi": 0.1119025734755037,
+     "actions": 440,
+     "series": 6
+    },
+    "presence": {
+     "point": 0.0006540912259629383,
+     "lo": -0.009493067278500078,
+     "hi": 0.01323968869673231,
+     "actions": 440,
+     "series": 6
+    }
+   }
+  },
+  "Swiss": {
+   "games": 51,
+   "models": {
+    "xp_adj": {
+     "point": 0.14708225937599284,
+     "lo": 0.09946172597149716,
+     "hi": 0.18578388954381975,
+     "actions": 1020,
+     "series": 33
+    },
+    "xp5": {
+     "point": 0.17754847423381426,
+     "lo": 0.12934112863747282,
+     "hi": 0.21994668409254325,
+     "actions": 1020,
+     "series": 33
+    },
+    "xp10": {
+     "point": 0.16038450566865103,
+     "lo": 0.11618129042517111,
+     "hi": 0.19642189384431874,
+     "actions": 1020,
+     "series": 33
+    },
+    "gol_rec5": {
+     "point": 0.14803655396193327,
+     "lo": 0.10182280318068315,
+     "hi": 0.18565540306348094,
+     "actions": 1020,
+     "series": 33
+    },
+    "presence": {
+     "point": 0.010615695871459607,
+     "lo": 0.001017192575875736,
+     "hi": 0.019519850471610756,
+     "actions": 1020,
+     "series": 33
+    }
+   }
+  },
+  "Knockouts": {
+   "games": 25,
+   "models": {
+    "xp_adj": {
+     "point": 0.1545171004843997,
+     "lo": 0.10752788812756675,
+     "hi": 0.20333399523518336,
+     "actions": 500,
+     "series": 7
+    },
+    "xp5": {
+     "point": 0.18297732885430373,
+     "lo": 0.13103666753432153,
+     "hi": 0.23930322977367013,
+     "actions": 500,
+     "series": 7
+    },
+    "xp10": {
+     "point": 0.16881121810135236,
+     "lo": 0.12564396924390908,
+     "hi": 0.21382821858878565,
+     "actions": 500,
+     "series": 7
+    },
+    "gol_rec5": {
+     "point": 0.1547806654958035,
+     "lo": 0.08818582294931887,
+     "hi": 0.22198271466180475,
+     "actions": 500,
+     "series": 7
+    },
+    "presence": {
+     "point": 0.017046135075837077,
+     "lo": 0.011938801014638623,
+     "hi": 0.021814443743441547,
+     "actions": 500,
+     "series": 7
+    }
+   }
+  }
+ },
+ "verdict": {
+  "pass": true,
+  "rule": "patch-adjusted xPresence beats PrioScore per draft action, all games pooled, and the 90% range stays above zero",
+  "point": 0.14535963932591023,
+  "lo": 0.12062031698837794,
+  "hi": 0.17344616180884365
+ },
+ "game1s": 46,
+ "biggestMisses": [
+  {
+   "champ": "Renata Glasc",
+   "predicted": 0.229,
+   "actualG1": 0.783,
+   "worldsPresence": 0.724,
+   "diff": 0.554,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Lucian",
+   "predicted": 0.675,
+   "actualG1": 0.152,
+   "worldsPresence": 0.255,
+   "diff": -0.523,
+   "patch": [
+    "16.19 adjusted (small)",
+    "16.20 buff (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Qiyana",
+   "predicted": 0.303,
+   "actualG1": 0.783,
+   "worldsPresence": 0.592,
+   "diff": 0.479,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Syndra",
+   "predicted": 0.365,
+   "actualG1": 0.826,
+   "worldsPresence": 0.561,
+   "diff": 0.461,
+   "patch": [
+    "16.18 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Ryze",
+   "predicted": 0.486,
+   "actualG1": 0.065,
+   "worldsPresence": 0.133,
+   "diff": -0.42,
+   "patch": [
+    "16.19 adjusted (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Nautilus",
+   "predicted": 0.258,
+   "actualG1": 0.652,
+   "worldsPresence": 0.439,
+   "diff": 0.394,
+   "patch": [
+    "16.18 nerf (small)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Jhin",
+   "predicted": 0.164,
+   "actualG1": 0.522,
+   "worldsPresence": 0.347,
+   "diff": 0.358,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Locke",
+   "predicted": 0.172,
+   "actualG1": 0.5,
+   "worldsPresence": 0.48,
+   "diff": 0.328,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Galio",
+   "predicted": 0.185,
+   "actualG1": 0.435,
+   "worldsPresence": 0.357,
+   "diff": 0.249,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "KSante",
+   "predicted": 0.294,
+   "actualG1": 0.543,
+   "worldsPresence": 0.429,
+   "diff": 0.249,
+   "patch": [
+    "16.20 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Alistar",
+   "predicted": 0.166,
+   "actualG1": 0.391,
+   "worldsPresence": 0.296,
+   "diff": 0.226,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Caitlyn",
+   "predicted": 0.333,
+   "actualG1": 0.109,
+   "worldsPresence": 0.245,
+   "diff": -0.224,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Ambessa",
+   "predicted": 0.19,
+   "actualG1": 0.413,
+   "worldsPresence": 0.337,
+   "diff": 0.223,
+   "patch": [
+    "16.20 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Naafiri",
+   "predicted": 0.282,
+   "actualG1": 0.065,
+   "worldsPresence": 0.143,
+   "diff": -0.217,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Lee Sin",
+   "predicted": 0.482,
+   "actualG1": 0.696,
+   "worldsPresence": 0.52,
+   "diff": 0.213,
+   "patch": [],
+   "explainedByPatchNotes": false
+  }
+ ]
+}
