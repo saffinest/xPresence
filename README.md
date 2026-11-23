@@ -32,6 +32,7 @@ Every test builds xPresence from earlier games only, then scores how likely it f
 
 | Test | Tests | xPresence won | Gain vs PrioScore |
 |---|---|---|---|
+| **Worlds 2026, frozen predictions** (98 games, pre-registered test) | 1 | Passed | +14.5% (90% range +12.1% to +17.3%) |
 | Domestic patches, 2025–2026 (six leagues, 150-day rolling window) | 26 | 25 | +34.8% |
 | International events: First Stand, MSI and Worlds 2025; First Stand and MSI 2026 | 5 | 5 | +32.4% |
 | MSI 2026 rehearsal (spring data only) | 1 | 1 | +17.9% (90% range +14% to +22%) |
@@ -57,7 +58,10 @@ The Evidence tab on the dashboard has every test, chart and number.
 - **Baseline frozen before Worlds:** `data/snapshot5.json`, with settings as of Sep 26, 2026.
 - **The patch-adjusted list was updated once,** on Oct 8, with the Worlds patch (16.20). Nothing else in the baseline changes.
 - **Test plan:** [`data/worlds-test-plan-2026.md`](data/worlds-test-plan-2026.md) sets out the models, games, data, metrics and what counts as a pass. It is fixed before Worlds starts on Oct 15.
-- **Results will be posted after the final** on Nov 14, whether good or bad.
+- **Result: passed.** Patch-adjusted xPresence found Worlds picks and bans 14.5% more likely than PrioScore (90% range +12.1% to +17.3%), over all 98 games.
+  - The unadjusted 5-day model did best (+16.9%). The patch-notes adjustment cost about 2%: none of the biggest misses followed their patch notes.
+  - 12 LPL qualifier games that Oracle's Elixir lists under Worlds were excluded because they're in the training data.
+  - Full result: [`data/worlds-result-2026.json`](data/worlds-result-2026.json). Code: `analysis/export_worlds.py` and `analysis/worlds_check.js`. The Evidence tab's "Worlds check" section has every table.
 
 ## Data
 

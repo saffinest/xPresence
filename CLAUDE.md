@@ -57,12 +57,14 @@ Read this first. It carries the project's decisions and history from earlier ses
 
 ## Tests (`analysis/`, results in `data/`)
 
-- **Tools:** Node (`brew install node`) and pandas (`pip install --user pandas`) were installed Sep 27. Homebrew lives in `/opt/homebrew/bin`, which isn't on the PATH of Claude's shell, so call `/opt/homebrew/bin/node` there.
+- **Tools:** Node (`brew install node`) and pandas (`pip install --user pandas`) were installed Sep 27. pandas is on the system Python (`/usr/bin/python3`, 3.9); since November `python3` resolves to Homebrew's 3.15, which doesn't have it, so call `/usr/bin/python3` for the export scripts. Homebrew lives in `/opt/homebrew/bin`, which isn't on the PATH of Claude's shell, so call `/opt/homebrew/bin/node` there.
 - **Pipeline:** run `export_all.py`, which writes `all_games.json` (5,105 games, 2025–2026), then `roles.py`, which writes `all_games_roles.json`. Then run the `.js` tests with Node from inside `analysis/`. Copy any inputs they need (e.g. `data/data_spring_msi.json`, `notes.json`, `wr_shift.json`) there first.
 - **Scoring metric:** for each draft action, the likelihood of the real choice among available champions, using softmax(β·log score) with β fitted on recent training games. Results are reported relative to gol.gg's PrioScore, rebuilt from its published rule (ban 1; pick rounds 1, ½, ⅓).
 - **Key results at the current settings:**
   - Rolling tests (`rolling2.js`, a 150-day window before each test): 26 domestic patches, +34.8% vs PrioScore, won 25. Five international events, +32.4%, won 5.
   - Recency is almost the whole edge; without it, xPresence roughly ties PrioScore.
+  - Worlds 2026 (`export_worlds.py` + `worlds_check.js`, result `data/worlds-result-2026.json`): **passed** the pre-registered test. Patch-adjusted xPresence +14.5% vs PrioScore (90% range +12.1% to +17.3%), 98 games. Unadjusted 5-day +16.9% did best; the patch adjustment cost about 2% (none of the biggest misses followed their patch notes). Vs PrioScore with recency: +1.3% (range just touches zero). 90%+ Game 1 bin: taken 89.1%, predicted 97.4%.
+    - To rerun: `/usr/bin/python3 export_worlds.py <2026 OE csv> worlds.json` (drops the 12 LPL qualifier games dated before Oct 15), copy `data3.json`, `snapshot5.json`, `snapshot3.json` and `patch_adj.json` into `analysis/`, then `node worlds_check.js . worlds.json ../data/worlds-stages-2026.json worlds_result.json`. Reproduced Nov 22 to within 2e-16.
   - Recency-weighted PrioScore (`prio_recency.js`, same 31 tests): PrioScore with the same weighting, half-life picked leave-one-out (it chose 5 days every time), gains +26.8% domestic and +22.2% international over plain PrioScore. xPresence adds +6.0% domestic (won 23 of 26) and +8.2% international (5 of 5) on top. Presence with the same weighting does nearly as well as weighted PrioScore (+25.7%, +21.9%).
   - Scoring detail: the site scores xPresence with β = 1 (its own probabilities); PrioScore and presence get β fitted on the last 30 days of training. With fitted β for xPresence too, the gain over recency-weighted PrioScore is +4.6% domestic (23 of 26) and +3.5% international (4 of 5). The published +34.8% / +32.4% is `rolling2.json`'s `pl_h5.ll1`, which still counted deciding games 1.5×; today's model gives +34.4% / +32.2%.
   - MSI 2026 rehearsal (spring data only): +17.9% (90% range +14% to +22%).
@@ -92,7 +94,7 @@ These are public, pre-registered predictions. Changing them after the fact defea
   - Update the Worlds patch-adjusted list once.
   - Freeze the Worlds test plan: models (include the per-role correction, field weighting and prior strength as comparisons), metrics, data source, and what counts as a win.
 - **Oct 19:** score the Demacia Cup predictions against the frozen file.
-- **Nov 16:** score Worlds 2026 (final Nov 14) and add a "Worlds check" section to the Evidence tab. Post results whether good or bad.
+- **Nov 16:** score Worlds 2026 (final Nov 14) and add a "Worlds check" section to the Evidence tab. Post results whether good or bad. (Done Nov 22: passed.)
 
 ## Ideas for later (off-season)
 
@@ -134,3 +136,8 @@ These are public, pre-registered predictions. Changing them after the fact defea
   - Applied the 16.20 Worlds patch: `patch_adj.json` (16 changes for 16.20), `init5.json` (`takeAdj` only) and `snapshot5.json` (`plTakeAdj` only; `plTake` and every other field unchanged). Checked before copying: the 16.18–16.19 entries and the old list (now `plTakeAdj_16_19`) are identical. Patch-adjusted now shows Lucian 67.5%, K'Sante 29.4%, Yunara 28.8%, Cassiopeia 97.4%. Page text says "16.18, 16.19 and the Worlds patch, 16.20"; the data line says "adjusted for 16.18–16.20".
   - Added the Worlds test plan as `data/worlds-test-plan-2026.md` (frozen after Oct 15), linked from the README's Worlds section and the About tab's Worlds baseline note (the baseline note lives on About, not Evidence).
   - Brought the page, README and this file in line with the plan: the per-role correction is "not adopted" (Evidence badge and role-section text) and isn't part of the Worlds test; field weighting is tested only at the Demacia Cup.
+- **Nov 22:** Worlds 2026 check added.
+  - Files: `data/worlds-result-2026.json`, `data/worlds-stages-2026.json` (stage dates the stage split needs), `analysis/export_worlds.py` and `analysis/worlds_check.js`.
+  - Evidence tab: a "Pre-registered test" row at the top of the results table (PASS, +14.5%) and a collapsible "Worlds check" section (model table, stage split, Game 1 accuracy bins, biggest misses with patch notes).
+  - The owner's `export_worlds.py` kept all 110 `WLDs` games; the 12 LPL regional-qualifier games (Sep 17–19, already in the summer training data) had been dropped by hand. Added a `WORLDS_START = '2026-10-15'` filter so the committed script reproduces the 98 games, and changed its usage line (`python3 -I` hides user-installed pandas).
+  - Frozen files and the test plan untouched.

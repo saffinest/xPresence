@@ -270,6 +270,23 @@ details.chart-data td:first-child,details.chart-data th:first-child{text-align:l
       <p class="note" id="res-note"></p>
     </div>
 
+    <details class="card fold" id="d-worlds">
+      <summary><h2>Worlds check</h2><span class="note">The frozen predictions, scored on every Worlds 2026 game as set out in the test plan</span></summary>
+      <p class="explain" id="wc-verdict"></p>
+      <h3>Every model</h3>
+      <p class="note">Gain per draft action over gol.gg's PrioScore, all games pooled. The 90% range comes from resampling whole Worlds series. The main model is highlighted.</p>
+      <div class="tscroll"><table class="bt" id="wc-models" aria-label="Worlds 2026: every model against PrioScore"></table></div>
+      <h3>By stage</h3>
+      <div class="tscroll"><table class="bt" id="wc-stages" aria-label="Worlds 2026: gain over PrioScore by stage"></table></div>
+      <h3>Are the Game 1 percentages accurate?</h3>
+      <p class="note" id="wc-cal-note"></p>
+      <div class="tscroll"><table class="bt" id="wc-cal" aria-label="Worlds 2026: patch-adjusted xPresence, predicted against actual, Game 1s"></table></div>
+      <h3>Biggest misses</h3>
+      <p class="note">Champions whose Game 1 rate at Worlds was furthest from the frozen patch-adjusted prediction, with the patch notes that went into it.</p>
+      <div class="tscroll"><table class="bt" id="wc-miss" aria-label="Worlds 2026: biggest misses with patch notes"></table></div>
+      <ul class="plain" id="wc-notes" style="font-size:13px"></ul>
+    </details>
+
     <div class="card">
       <div class="card-hd"><h2>Are the percentages accurate?</h2><span class="note">Game 1s in all 31 rolling tests, 5-day half-life</span></div>
       <div class="two">
@@ -768,6 +785,677 @@ const PADJ = {"next": {"tests": [{"label": "patch 16.10", "cur": "16.9", "patche
 const CAL = {"half":5,"tests":33,"bins":{"domestic":[{"a":0,"b":0.05,"n":181083,"pred":0.0151,"act":0.0087},{"a":0.05,"b":0.15,"n":42914,"pred":0.0918,"act":0.0876},{"a":0.15,"b":0.3,"n":27262,"pred":0.2123,"act":0.2332},{"a":0.3,"b":0.5,"n":20947,"pred":0.3865,"act":0.4347},{"a":0.5,"b":0.7,"n":8244,"pred":0.5941,"act":0.6029},{"a":0.7,"b":0.9,"n":7201,"pred":0.796,"act":0.7795},{"a":0.9,"b":1,"n":3931,"pred":0.9496,"act":0.898}],"international":[{"a":0,"b":0.05,"n":10890,"pred":0.013,"act":0.0089},{"a":0.05,"b":0.15,"n":2971,"pred":0.0933,"act":0.0892},{"a":0.15,"b":0.3,"n":1874,"pred":0.2107,"act":0.2263},{"a":0.3,"b":0.5,"n":1232,"pred":0.3831,"act":0.461},{"a":0.5,"b":0.7,"n":596,"pred":0.6188,"act":0.6023},{"a":0.7,"b":0.9,"n":447,"pred":0.7692,"act":0.6957},{"a":0.9,"b":1,"n":193,"pred":0.9389,"act":0.8083}]},"top10":{"domestic":{"perG1":7.57,"g1":1746},"international":{"perG1":7.06,"g1":109}}};
 const ROLES = {"counts": {"Vi": [0, 154, 0, 0, 1], "Lucian": [0, 0, 0, 154, 0], "Cassiopeia": [0, 0, 97, 19, 0], "Shen": [8, 0, 0, 0, 136], "Leona": [0, 0, 0, 0, 85], "Poppy": [2, 28, 0, 0, 13], "Pantheon": [0, 133, 0, 0, 2], "Orianna": [0, 0, 160, 2, 0], "Galio": [18, 0, 85, 1, 1], "Syndra": [0, 0, 162, 22, 0], "Ezreal": [0, 0, 0, 204, 0], "Lee Sin": [0, 169, 0, 1, 0], "Camille": [42, 0, 0, 0, 76], "Anivia": [10, 0, 62, 0, 0], "Ambessa": [169, 1, 0, 0, 0], "Ryze": [2, 0, 210, 0, 0], "Jarvan IV": [0, 203, 0, 0, 1], "Rumble": [199, 0, 4, 0, 0], "Caitlyn": [0, 0, 0, 101, 0], "Bard": [0, 0, 0, 0, 131], "Ziggs": [0, 0, 0, 78, 0], "Nautilus": [0, 1, 0, 0, 143], "Nocturne": [0, 109, 0, 0, 0], "Olaf": [135, 8, 0, 0, 0], "Karma": [0, 0, 0, 0, 126], "KSante": [148, 0, 1, 0, 0], "Xin Zhao": [0, 100, 0, 0, 0], "Jayce": [139, 7, 4, 2, 0], "Jhin": [0, 0, 0, 159, 0], "Alistar": [0, 0, 0, 0, 114], "Lulu": [0, 0, 0, 0, 102], "Milio": [0, 0, 0, 0, 139], "Xayah": [0, 0, 0, 56, 0], "Rakan": [0, 0, 0, 0, 74], "Twisted Fate": [16, 0, 29, 0, 0], "Akali": [4, 0, 90, 4, 0], "Naafiri": [0, 164, 0, 2, 0], "Yunara": [0, 0, 0, 100, 0], "Vayne": [30, 0, 0, 1, 0], "Annie": [0, 0, 67, 0, 0], "Trundle": [10, 80, 0, 0, 0], "Azir": [0, 0, 22, 0, 0], "Skarner": [0, 86, 0, 0, 1], "Jax": [42, 1, 0, 0, 0], "KogMaw": [1, 0, 0, 4, 0], "Kennen": [13, 0, 0, 0, 0], "Gwen": [21, 0, 0, 0, 0], "Wukong": [0, 93, 0, 0, 0], "Gnar": [153, 0, 1, 0, 0], "Mordekaiser": [3, 0, 0, 0, 0], "Locke": [0, 0, 79, 3, 0], "Ashe": [0, 0, 0, 92, 0], "Kalista": [0, 0, 0, 63, 0], "Renata Glasc": [0, 0, 0, 0, 60], "KhaZix": [0, 3, 0, 0, 0], "Renekton": [72, 0, 0, 0, 0], "Ahri": [0, 0, 93, 0, 0], "Seraphine": [0, 0, 0, 6, 119], "Neeko": [0, 0, 0, 0, 30], "Sivir": [0, 0, 0, 76, 0], "Corki": [1, 0, 2, 85, 0], "Viktor": [0, 0, 109, 40, 0], "Sylas": [0, 0, 58, 2, 0], "Taliyah": [0, 0, 42, 15, 0], "Yorick": [63, 0, 0, 0, 0], "Sion": [14, 0, 0, 0, 0], "Qiyana": [0, 61, 0, 0, 0], "Maokai": [0, 36, 0, 0, 1], "Gragas": [8, 0, 0, 0, 0], "Varus": [28, 0, 0, 70, 0], "Lux": [0, 0, 0, 0, 16], "Ornn": [23, 0, 0, 0, 0], "Aurora": [3, 0, 36, 0, 0], "Kled": [24, 0, 0, 0, 0], "Zaahen": [24, 5, 0, 0, 0], "Mel": [0, 0, 2, 11, 0], "Yone": [2, 0, 42, 0, 0], "Lissandra": [1, 0, 14, 0, 0], "Zoe": [0, 0, 6, 0, 0], "Elise": [0, 0, 0, 0, 4], "Kaisa": [3, 0, 0, 54, 0], "Aatrox": [26, 11, 1, 1, 0], "Udyr": [2, 0, 0, 0, 0], "Rell": [0, 0, 0, 0, 91], "Miss Fortune": [0, 0, 0, 31, 0], "Dr. Mundo": [19, 3, 0, 0, 0], "Nidalee": [2, 5, 0, 0, 0], "Chogath": [3, 21, 0, 0, 0], "Sejuani": [0, 16, 0, 0, 0], "Braum": [0, 0, 0, 0, 8], "Shyvana": [1, 10, 0, 0, 0], "Pyke": [0, 0, 0, 0, 8], "Yuumi": [0, 0, 0, 0, 13], "Tristana": [8, 0, 8, 5, 0], "Draven": [0, 0, 0, 4, 0], "Zeri": [0, 0, 0, 18, 0], "Diana": [0, 0, 1, 0, 0], "Irelia": [1, 0, 0, 0, 0], "Aphelios": [0, 0, 0, 8, 0], "LeBlanc": [0, 0, 22, 0, 0], "Zed": [0, 1, 0, 0, 0], "Fiora": [1, 0, 0, 0, 0], "Jinx": [0, 0, 0, 5, 0], "Tahm Kench": [0, 0, 0, 0, 4], "Blitzcrank": [0, 0, 0, 0, 1], "Vex": [0, 0, 2, 0, 0], "Nasus": [6, 3, 0, 0, 0], "Hwei": [0, 0, 11, 1, 0], "Hecarim": [0, 1, 0, 0, 0], "Kindred": [0, 1, 0, 0, 0], "Thresh": [0, 0, 0, 0, 11], "Nami": [0, 0, 0, 0, 9], "Soraka": [0, 0, 0, 0, 1], "Belveth": [0, 1, 0, 0, 0], "Xerath": [0, 0, 0, 14, 0], "Graves": [0, 3, 0, 0, 0], "Vladimir": [0, 0, 0, 4, 0], "Malphite": [9, 1, 0, 0, 0], "Tryndamere": [21, 3, 1, 0, 0], "Zyra": [0, 1, 0, 0, 0], "Volibear": [7, 1, 0, 0, 0], "Warwick": [1, 0, 0, 0, 0], "Taric": [0, 0, 0, 0, 1], "Gangplank": [1, 0, 0, 0, 0], "Yasuo": [0, 0, 0, 1, 0], "VelKoz": [0, 0, 0, 1, 1], "Senna": [0, 0, 0, 2, 0], "Ivern": [0, 2, 0, 0, 0], "Swain": [2, 0, 1, 0, 0], "Amumu": [0, 0, 0, 0, 1], "Kayn": [0, 1, 0, 0, 0], "Urgot": [3, 0, 0, 0, 0], "Aurelion Sol": [0, 0, 1, 0, 0], "Garen": [1, 0, 0, 0, 0], "Samira": [0, 0, 0, 2, 0], "Sett": [24, 1, 2, 0, 3]}, "fallback": ["Tryndamere", "Sett"]};
 const ROLEX = {"tests":31,"draft":{"gain":0.4062,"soft":0.3282,"lam9":0.4827,"pick":0.7353,"ban":0.1393,"beats":31},"take":{"beats":7},"cal":{"beats":22,"total":31,"loss":-0.45,"supK":1.19},"bias":{"plain":[[4,3.79],[4.52,4.17],[4.35,4.21],[3.81,4.02],[3.32,3.81]],"hard":[[3.96,3.79],[4.65,4.17],[4.25,4.21],[3.9,4.02],[3.25,3.81]]},"band":[[0.381,0.421,4120],[0.395,0.405,3806],[0.384,0.406,3958],[0.39,0.426,4111],[0.384,0.492,6184]]};
+const WORLDS = {
+ "plan": "data/worlds-test-plan-2026.md (frozen Oct 9, 2026)",
+ "games": 98,
+ "series": 46,
+ "actions": 1960,
+ "newChampions": [
+  "Lillia",
+  "Twitch"
+ ],
+ "unseenRule": "Champions not in a frozen snapshot get that snapshot's weakest strength; baselines use the +0.01 floor from the rolling tests.",
+ "dataNotes": {
+  "dropped_duplicates": [],
+  "repeat_picks_in_series": [],
+  "games_missing_picks": [],
+  "unknownFirstPick": 0
+ },
+ "models": {
+  "xp_adj": {
+   "name": "Patch-adjusted xPresence (main)",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.14535963932591023,
+    "lo": 0.12062031698837794,
+    "hi": 0.17344616180884365,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.012618143983147867,
+    "lo": -0.000207744054421255,
+    "hi": 0.028224374088751114,
+    "actions": 1960,
+    "series": 46
+   },
+   "fittedBeta": {
+    "beta": 1.303,
+    "vsGol": {
+     "point": 0.12872029331526735,
+     "lo": 0.095068738323842,
+     "hi": 0.17048805445295123,
+     "actions": 1960,
+     "series": 46
+    }
+   },
+   "rankCorr": 0.913,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Lucian",
+     "Ezreal",
+     "Olaf",
+     "Rumble",
+     "Lee Sin"
+    ],
+    "perGame1": 6.96
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 2760,
+     "predicted": 0.021,
+     "actual": 0.007
+    },
+    {
+     "range": "5-15%",
+     "n": 1564,
+     "predicted": 0.088,
+     "actual": 0.067
+    },
+    {
+     "range": "15-30%",
+     "n": 1150,
+     "predicted": 0.209,
+     "actual": 0.266
+    },
+    {
+     "range": "30-50%",
+     "n": 460,
+     "predicted": 0.391,
+     "actual": 0.441
+    },
+    {
+     "range": "50-70%",
+     "n": 184,
+     "predicted": 0.643,
+     "actual": 0.565
+    },
+    {
+     "range": "70-90%",
+     "n": 184,
+     "predicted": 0.764,
+     "actual": 0.777
+    },
+    {
+     "range": "90-100%",
+     "n": 46,
+     "predicted": 0.974,
+     "actual": 0.891
+    }
+   ]
+  },
+  "xp5": {
+   "name": "xPresence, unadjusted (5-day)",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.16915837064636685,
+    "lo": 0.14178936983617674,
+    "hi": 0.19890174399373195,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.033658720507266926,
+    "lo": 0.021731320430091294,
+    "hi": 0.049461362708777656,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.908,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Olaf",
+     "Rumble",
+     "Lucian",
+     "Lee Sin"
+    ],
+    "perGame1": 6.96
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 2806,
+     "predicted": 0.02,
+     "actual": 0.006
+    },
+    {
+     "range": "5-15%",
+     "n": 1610,
+     "predicted": 0.09,
+     "actual": 0.072
+    },
+    {
+     "range": "15-30%",
+     "n": 966,
+     "predicted": 0.21,
+     "actual": 0.278
+    },
+    {
+     "range": "30-50%",
+     "n": 552,
+     "predicted": 0.388,
+     "actual": 0.415
+    },
+    {
+     "range": "50-70%",
+     "n": 230,
+     "predicted": 0.628,
+     "actual": 0.565
+    },
+    {
+     "range": "70-90%",
+     "n": 92,
+     "predicted": 0.77,
+     "actual": 0.783
+    },
+    {
+     "range": "90-100%",
+     "n": 92,
+     "predicted": 0.95,
+     "actual": 0.935
+    }
+   ]
+  },
+  "xp10": {
+   "name": "Old 10-day baseline",
+   "beta": 1,
+   "vsGol": {
+    "point": 0.14503175746783636,
+    "lo": 0.11859343995935956,
+    "hi": 0.17352791561759595,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": 0.01232826200445003,
+    "lo": -0.0014427320167130775,
+    "hi": 0.028688830384449915,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.91,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Lucian",
+     "Olaf",
+     "Rumble",
+     "Ryze"
+    ],
+    "perGame1": 6.33
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 3128,
+     "predicted": 0.015,
+     "actual": 0.011
+    },
+    {
+     "range": "5-15%",
+     "n": 1242,
+     "predicted": 0.095,
+     "actual": 0.091
+    },
+    {
+     "range": "15-30%",
+     "n": 1012,
+     "predicted": 0.207,
+     "actual": 0.256
+    },
+    {
+     "range": "30-50%",
+     "n": 506,
+     "predicted": 0.388,
+     "actual": 0.439
+    },
+    {
+     "range": "50-70%",
+     "n": 184,
+     "predicted": 0.601,
+     "actual": 0.391
+    },
+    {
+     "range": "70-90%",
+     "n": 138,
+     "predicted": 0.772,
+     "actual": 0.638
+    },
+    {
+     "range": "90-100%",
+     "n": 138,
+     "predicted": 0.946,
+     "actual": 0.949
+    }
+   ]
+  },
+  "gol": {
+   "name": "gol.gg's PrioScore",
+   "beta": 1.324,
+   "vsGol": null,
+   "vsGolRec": {
+    "point": -0.11589503487383757,
+    "lo": -0.13964581687704636,
+    "hi": -0.09079829321734079,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.885,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Orianna",
+     "Ezreal",
+     "Poppy",
+     "Lucian",
+     "Jarvan IV",
+     "Jayce",
+     "Akali"
+    ],
+    "perGame1": 5.98
+   }
+  },
+  "gol_rec5": {
+   "name": "PrioScore with 5-day recency",
+   "beta": 1.667,
+   "vsGol": {
+    "point": 0.13108741546010805,
+    "lo": 0.10266195118994825,
+    "hi": 0.16347704174948374,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": null,
+   "rankCorr": 0.9,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Vi",
+     "Olaf",
+     "Orianna",
+     "Jarvan IV",
+     "Ezreal",
+     "Akali",
+     "Lucian",
+     "Lee Sin"
+    ],
+    "perGame1": 6.78
+   }
+  },
+  "presence": {
+   "name": "Presence",
+   "beta": 1.446,
+   "vsGol": {
+    "point": 0.010003729505759784,
+    "lo": 0.0023897346786985185,
+    "hi": 0.016424919951805173,
+    "actions": 1960,
+    "series": 46
+   },
+   "vsGolRec": {
+    "point": -0.1070506879480162,
+    "lo": -0.13180945883933481,
+    "hi": -0.08263900444650962,
+    "actions": 1960,
+    "series": 46
+   },
+   "rankCorr": 0.886,
+   "top10": {
+    "list": [
+     "Cassiopeia",
+     "Nocturne",
+     "Orianna",
+     "Vi",
+     "Ezreal",
+     "Poppy",
+     "Jayce",
+     "Lucian",
+     "Jarvan IV",
+     "Akali"
+    ],
+    "perGame1": 5.98
+   },
+   "calibration": [
+    {
+     "range": "0-5%",
+     "n": 3128,
+     "predicted": 0.014,
+     "actual": 0.011
+    },
+    {
+     "range": "5-15%",
+     "n": 1012,
+     "predicted": 0.109,
+     "actual": 0.161
+    },
+    {
+     "range": "15-30%",
+     "n": 1104,
+     "predicted": 0.212,
+     "actual": 0.192
+    },
+    {
+     "range": "30-50%",
+     "n": 690,
+     "predicted": 0.4,
+     "actual": 0.377
+    },
+    {
+     "range": "50-70%",
+     "n": 322,
+     "predicted": 0.576,
+     "actual": 0.516
+    },
+    {
+     "range": "70-90%",
+     "n": 92,
+     "predicted": 0.762,
+     "actual": 0.935
+    }
+   ]
+  }
+ },
+ "stages": {
+  "Play-In": {
+   "games": 22,
+   "models": {
+    "xp_adj": {
+     "point": 0.13109405119321282,
+     "lo": 0.09510112189631714,
+     "hi": 0.17526449051874682,
+     "actions": 440,
+     "series": 6
+    },
+    "xp5": {
+     "point": 0.13468520280469654,
+     "lo": 0.09516692292887363,
+     "hi": 0.18897624388659162,
+     "actions": 440,
+     "series": 6
+    },
+    "xp10": {
+     "point": 0.08458634108484153,
+     "lo": 0.04966645016928095,
+     "hi": 0.133702304714862,
+     "actions": 440,
+     "series": 6
+    },
+    "gol_rec5": {
+     "point": 0.06731031745730043,
+     "lo": 0.028003282170169008,
+     "hi": 0.1119025734755037,
+     "actions": 440,
+     "series": 6
+    },
+    "presence": {
+     "point": 0.0006540912259629383,
+     "lo": -0.009493067278500078,
+     "hi": 0.01323968869673231,
+     "actions": 440,
+     "series": 6
+    }
+   }
+  },
+  "Swiss": {
+   "games": 51,
+   "models": {
+    "xp_adj": {
+     "point": 0.14708225937599284,
+     "lo": 0.09946172597149716,
+     "hi": 0.18578388954381975,
+     "actions": 1020,
+     "series": 33
+    },
+    "xp5": {
+     "point": 0.17754847423381426,
+     "lo": 0.12934112863747282,
+     "hi": 0.21994668409254325,
+     "actions": 1020,
+     "series": 33
+    },
+    "xp10": {
+     "point": 0.16038450566865103,
+     "lo": 0.11618129042517111,
+     "hi": 0.19642189384431874,
+     "actions": 1020,
+     "series": 33
+    },
+    "gol_rec5": {
+     "point": 0.14803655396193327,
+     "lo": 0.10182280318068315,
+     "hi": 0.18565540306348094,
+     "actions": 1020,
+     "series": 33
+    },
+    "presence": {
+     "point": 0.010615695871459607,
+     "lo": 0.001017192575875736,
+     "hi": 0.019519850471610756,
+     "actions": 1020,
+     "series": 33
+    }
+   }
+  },
+  "Knockouts": {
+   "games": 25,
+   "models": {
+    "xp_adj": {
+     "point": 0.1545171004843997,
+     "lo": 0.10752788812756675,
+     "hi": 0.20333399523518336,
+     "actions": 500,
+     "series": 7
+    },
+    "xp5": {
+     "point": 0.18297732885430373,
+     "lo": 0.13103666753432153,
+     "hi": 0.23930322977367013,
+     "actions": 500,
+     "series": 7
+    },
+    "xp10": {
+     "point": 0.16881121810135236,
+     "lo": 0.12564396924390908,
+     "hi": 0.21382821858878565,
+     "actions": 500,
+     "series": 7
+    },
+    "gol_rec5": {
+     "point": 0.1547806654958035,
+     "lo": 0.08818582294931887,
+     "hi": 0.22198271466180475,
+     "actions": 500,
+     "series": 7
+    },
+    "presence": {
+     "point": 0.017046135075837077,
+     "lo": 0.011938801014638623,
+     "hi": 0.021814443743441547,
+     "actions": 500,
+     "series": 7
+    }
+   }
+  }
+ },
+ "verdict": {
+  "pass": true,
+  "rule": "patch-adjusted xPresence beats PrioScore per draft action, all games pooled, and the 90% range stays above zero",
+  "point": 0.14535963932591023,
+  "lo": 0.12062031698837794,
+  "hi": 0.17344616180884365
+ },
+ "game1s": 46,
+ "biggestMisses": [
+  {
+   "champ": "Renata Glasc",
+   "predicted": 0.229,
+   "actualG1": 0.783,
+   "worldsPresence": 0.724,
+   "diff": 0.554,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Lucian",
+   "predicted": 0.675,
+   "actualG1": 0.152,
+   "worldsPresence": 0.255,
+   "diff": -0.523,
+   "patch": [
+    "16.19 adjusted (small)",
+    "16.20 buff (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Qiyana",
+   "predicted": 0.303,
+   "actualG1": 0.783,
+   "worldsPresence": 0.592,
+   "diff": 0.479,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Syndra",
+   "predicted": 0.365,
+   "actualG1": 0.826,
+   "worldsPresence": 0.561,
+   "diff": 0.461,
+   "patch": [
+    "16.18 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Ryze",
+   "predicted": 0.486,
+   "actualG1": 0.065,
+   "worldsPresence": 0.133,
+   "diff": -0.42,
+   "patch": [
+    "16.19 adjusted (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Nautilus",
+   "predicted": 0.258,
+   "actualG1": 0.652,
+   "worldsPresence": 0.439,
+   "diff": 0.394,
+   "patch": [
+    "16.18 nerf (small)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Jhin",
+   "predicted": 0.164,
+   "actualG1": 0.522,
+   "worldsPresence": 0.347,
+   "diff": 0.358,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Locke",
+   "predicted": 0.172,
+   "actualG1": 0.5,
+   "worldsPresence": 0.48,
+   "diff": 0.328,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Galio",
+   "predicted": 0.185,
+   "actualG1": 0.435,
+   "worldsPresence": 0.357,
+   "diff": 0.249,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "KSante",
+   "predicted": 0.294,
+   "actualG1": 0.543,
+   "worldsPresence": 0.429,
+   "diff": 0.249,
+   "patch": [
+    "16.20 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Alistar",
+   "predicted": 0.166,
+   "actualG1": 0.391,
+   "worldsPresence": 0.296,
+   "diff": 0.226,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Caitlyn",
+   "predicted": 0.333,
+   "actualG1": 0.109,
+   "worldsPresence": 0.245,
+   "diff": -0.224,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Ambessa",
+   "predicted": 0.19,
+   "actualG1": 0.413,
+   "worldsPresence": 0.337,
+   "diff": 0.223,
+   "patch": [
+    "16.20 nerf (medium)"
+   ],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Naafiri",
+   "predicted": 0.282,
+   "actualG1": 0.065,
+   "worldsPresence": 0.143,
+   "diff": -0.217,
+   "patch": [],
+   "explainedByPatchNotes": false
+  },
+  {
+   "champ": "Lee Sin",
+   "predicted": 0.482,
+   "actualG1": 0.696,
+   "worldsPresence": 0.52,
+   "diff": 0.213,
+   "patch": [],
+   "explainedByPatchNotes": false
+  }
+ ]
+}; // Worlds 2026 check of the frozen predictions (analysis/worlds_check.js)
 const PRIOREC = {"halfs": [3, 5, 7, 10, 14, 21], "models": {"domestic": {"presence": {"gain": 0, "beatsGol": 15, "tests": 26}, "gol_h3": {"gain": 0.2641, "beatsGol": 23, "tests": 26}, "gol_h5": {"gain": 0.2676, "beatsGol": 23, "tests": 26}, "gol_h7": {"gain": 0.2641, "beatsGol": 23, "tests": 26}, "gol_h10": {"gain": 0.2542, "beatsGol": 23, "tests": 26}, "gol_h14": {"gain": 0.2358, "beatsGol": 23, "tests": 26}, "gol_h21": {"gain": 0.2014, "beatsGol": 23, "tests": 26}, "gol_loo": {"gain": 0.2676, "beatsGol": 23, "tests": 26}, "pres_h3": {"gain": 0.2538, "beatsGol": 23, "tests": 26}, "pres_h5": {"gain": 0.2571, "beatsGol": 23, "tests": 26}, "pres_h7": {"gain": 0.2544, "beatsGol": 22, "tests": 26}, "pres_h10": {"gain": 0.2455, "beatsGol": 23, "tests": 26}, "pres_h14": {"gain": 0.2281, "beatsGol": 23, "tests": 26}, "pres_h21": {"gain": 0.1955, "beatsGol": 23, "tests": 26}, "pres_loo": {"gain": 0.2571, "beatsGol": 23, "tests": 26}, "xp5": {"gain": 0.326, "beatsGol": 24, "tests": 26}, "xp5_b1": {"gain": 0.3443, "beatsGol": 25, "tests": 26}}, "international": {"presence": {"gain": 0.0102, "beatsGol": 4, "tests": 5}, "gol_h3": {"gain": 0.2378, "beatsGol": 4, "tests": 5}, "gol_h5": {"gain": 0.2216, "beatsGol": 5, "tests": 5}, "gol_h7": {"gain": 0.1971, "beatsGol": 4, "tests": 5}, "gol_h10": {"gain": 0.1653, "beatsGol": 4, "tests": 5}, "gol_h14": {"gain": 0.1357, "beatsGol": 4, "tests": 5}, "gol_h21": {"gain": 0.1053, "beatsGol": 4, "tests": 5}, "gol_loo": {"gain": 0.2216, "beatsGol": 5, "tests": 5}, "pres_h3": {"gain": 0.2334, "beatsGol": 5, "tests": 5}, "pres_h5": {"gain": 0.219, "beatsGol": 5, "tests": 5}, "pres_h7": {"gain": 0.1962, "beatsGol": 5, "tests": 5}, "pres_h10": {"gain": 0.1667, "beatsGol": 5, "tests": 5}, "pres_h14": {"gain": 0.1394, "beatsGol": 5, "tests": 5}, "pres_h21": {"gain": 0.1114, "beatsGol": 5, "tests": 5}, "pres_loo": {"gain": 0.219, "beatsGol": 5, "tests": 5}, "xp5": {"gain": 0.2648, "beatsGol": 5, "tests": 5}, "xp5_b1": {"gain": 0.3223, "beatsGol": 5, "tests": 5}}}, "xpVsRecencyPrio": {"domestic": {"xp5": {"gain": 0.0461, "beats": 23, "tests": 26, "gainVsBestFixed": 0.0461}, "xp5_b1": {"gain": 0.0605, "beats": 23, "tests": 26, "gainVsBestFixed": 0.0605}}, "international": {"xp5": {"gain": 0.0354, "beats": 4, "tests": 5, "gainVsBestFixed": 0.0218}, "xp5_b1": {"gain": 0.0824, "beats": 5, "tests": 5, "gainVsBestFixed": 0.0682}}}, "looChoices": {"domestic": {"gol": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "pres": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]}, "international": {"gol": [5, 5, 5, 5, 5], "pres": [5, 5, 5, 5, 5]}}}; // PrioScore with the same recency weighting (analysis/prio_recency.js)
 (function(){
   const P = prepGames(D);
@@ -1050,7 +1738,10 @@ onmessage = e => {
     const rel = o => Math.exp(btRow(o,'Plackett–Luce + recency').ll - btRow(o,'gol.gg-style PrioScore').ll) - 1;
     const m = MSI.rows[0], pa = PADJ.gap.h5.flat.perTest;
     const paWon = pa.filter(v=>v>0).length, paLost = pa.filter(v=>v<0).length;
+    const wv = WORLDS.verdict;
     const rows = [
+      ['grp','Pre-registered test'],
+      { t:'Worlds 2026 (frozen predictions)', sub:`${WORLDS.games} games, scored as set out in the test plan`, n:1, won: wv.pass ? 'PASS' : 'FAIL', gain:`${f(wv.point)} <span class="muted">(90% range ${f(wv.lo)} to ${f(wv.hi)})</span>`, d:'d-worlds' },
       ['grp','Against gol.gg’s PrioScore'],
       { t:'Domestic patches, 2025–2026', sub:'six leagues, rolling', n:ROLL.domTests, won:`${h5.domBeats} of ${ROLL.domTests}`, gain:f(h5.dom), d:'d-rolling' },
       { t:'International events, 2025–2026', sub:'First Stand, MSI, Worlds', n:ROLL.intlTests, won:`${h5.intlBeats} of ${ROLL.intlTests}`, gain:f(h5.intl), d:'d-rolling' },
@@ -1069,6 +1760,38 @@ onmessage = e => {
       rows.map(r => Array.isArray(r) ? `<tr class="grp"><td colspan="5">${r[1]}</td></tr>` :
         `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}" aria-label="Details: ${r.t}">Details</button></td></tr>`).join('') + '</tbody>';
     $('res-note').textContent = `Headline: xPresence beat gol.gg in ${h5.domBeats + h5.intlBeats} of ${ROLL.domTests + ROLL.intlTests} rolling tests across ${ROLL.games.toLocaleString()} games at the current 5-day setting. Almost all of the gain comes from weighting recent games; without it, xPresence roughly ties gol.gg.`;
+  }
+  // Worlds 2026: the frozen predictions scored on every Worlds game (data/worlds-result-2026.json)
+  const WORLDS_EXCLUDED = 12; // LPL regional-qualifier games Oracle's Elixir files under Worlds; dropped in export_worlds.py
+  function renderWorlds(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%', p = v => (v*100).toFixed(1)+'%', M = WORLDS.models, V = WORLDS.verdict;
+    const fe = v => Math.abs(v) < 0.0005 && v !== 0 ? (v<0?'-':'+')+(Math.abs(v)*100).toFixed(2)+'%' : f(v); // so a range edge just below zero doesn't read "-0.0%"
+    const rng = r => `${fe(r.lo)} to ${fe(r.hi)}`;
+    const cost = (1 + M.xp5.vsGol.point) / (1 + M.xp_adj.vsGol.point) - 1;
+    const noted = WORLDS.biggestMisses.filter(m => m.patch.length), followed = noted.filter(m => m.explainedByPatchNotes).length;
+    $('wc-verdict').innerHTML = `<b>xPresence passed the pre-registered test.</b> Patch-adjusted xPresence, frozen before Worlds, found the real picks and bans ${p(V.point)} more likely than gol.gg's PrioScore (90% range ${rng(V)}), across ${WORLDS.games} games and ${WORLDS.actions.toLocaleString()} picks and bans. The unadjusted 5-day model did best (${f(M.xp5.vsGol.point)}). The patch-notes adjustment cost about ${Math.round(cost*100)}%, because ${followed ? `only ${followed} of the ${noted.length}` : 'none'} of the biggest misses followed their patch notes. ${WORLDS_EXCLUDED} LPL qualifier games that Oracle's Elixir lists under Worlds were excluded because they're in the training data.`;
+    const order = ['xp_adj','xp5','xp10','gol_rec5','presence','gol'];
+    $('wc-models').innerHTML = `<thead><tr><th>Model</th><th>vs PrioScore</th><th>90% range</th><th>vs PrioScore with recency</th><th>Rank corr.<span class="h2">with Worlds presence</span></th><th>Top 10<span class="h2">taken per Game 1</span></th></tr></thead><tbody>` +
+      order.map(k => { const m = M[k];
+        return `<tr class="${k==='xp_adj'?'hl':''}"><td>${m.name}</td><td class="num">${m.vsGol ? f(m.vsGol.point) : '–'}</td><td class="num muted">${m.vsGol ? rng(m.vsGol) : '–'}</td><td class="num">${m.vsGolRec ? f(m.vsGolRec.point) : '–'}</td><td class="num">${m.rankCorr.toFixed(3)}</td><td class="num">${m.top10.perGame1.toFixed(2)}</td></tr>`; }).join('') + '</tbody>';
+    const SK = [['xp_adj','Patch-adjusted'],['xp5','Unadjusted'],['xp10','10-day'],['gol_rec5','PrioScore with recency'],['presence','Presence']];
+    const cell = r => r ? `${f(r.point)} <span class="muted">(${rng(r)})</span>` : '–';
+    $('wc-stages').innerHTML = `<thead><tr><th>Stage</th><th>Games</th>${SK.map(([,n])=>`<th>${n}</th>`).join('')}</tr></thead><tbody>` +
+      `<tr class="hl"><td>All games</td><td class="num">${WORLDS.games}</td>${SK.map(([k])=>`<td class="num">${cell(M[k].vsGol)}</td>`).join('')}</tr>` +
+      Object.entries(WORLDS.stages).map(([st, v]) => `<tr><td>${st}</td><td class="num">${v.games}</td>${SK.map(([k])=>`<td class="num">${cell(v.models[k])}</td>`).join('')}</tr>`).join('') + '</tbody>';
+    const cal = M.xp_adj.calibration, top = cal[cal.length-1], top5 = M.xp5.calibration[M.xp5.calibration.length-1];
+    $('wc-cal-note').textContent = `Each champion still available in each of the ${WORLDS.game1s} Game 1s, grouped by its frozen patch-adjusted xPresence, against how often it was picked or banned. The test plan flagged the 90%+ group, because at past international events those champions were taken 81% of the time. At Worlds they were taken ${p(top.actual)} of the time (predicted ${p(top.predicted)}). For the unadjusted model it was ${p(top5.actual)} (predicted ${p(top5.predicted)}).`;
+    $('wc-cal').innerHTML = `<thead><tr><th>Rated</th><th>Champion-Game 1s</th><th>Predicted</th><th>Actually taken</th></tr></thead><tbody>` +
+      cal.map(b => `<tr><td>${b.range.replace('-', '–')}</td><td class="num">${b.n.toLocaleString()}</td><td class="num">${p(b.predicted)}</td><td class="num">${p(b.actual)}</td></tr>`).join('') + '</tbody>';
+    $('wc-miss').innerHTML = `<thead><tr><th>Champion</th><th>Predicted<span class="h2">Game 1, patch-adjusted</span></th><th>Taken<span class="h2">in Game 1s</span></th><th>Worlds presence</th><th>Patch notes</th></tr></thead><tbody>` +
+      WORLDS.biggestMisses.map(m => `<tr><td>${m.champ}</td><td class="num">${p(m.predicted)}</td><td class="num ${m.diff>0?'d-up':'d-dn'}">${p(m.actualG1)}</td><td class="num">${p(m.worldsPresence)}</td><td>${m.patch.length ? m.patch.join('; ') : '<span class="muted">none</span>'}</td></tr>`).join('') + '</tbody>';
+    const rec = M.xp_adj.vsGolRec;
+    $('wc-notes').innerHTML = [
+      `Scoring follows the test plan: xPresence uses its own percentages, while PrioScore, PrioScore with recency and presence get a scale fitted on the last 30 days of summer games. With that fitting step too, patch-adjusted xPresence is ${f(M.xp_adj.fittedBeta.vsGol.point)} better than PrioScore.`,
+      `Against PrioScore with recency, patch-adjusted xPresence is ${f(rec.point)} (90% range ${rng(rec)}) and unadjusted xPresence ${f(M.xp5.vsGolRec.point)}. The plan reports this as context, not as a pass or fail.`,
+      `${WORLDS.newChampions.join(' and ')} weren't drafted in the summer data, so each model gives them its weakest frozen strength.`,
+      `Data: Oracle's Elixir 2026 match data, downloaded after the final. ${WORLDS.games} games in ${WORLDS.series} series; no duplicate games, no repeat picks within a series and no missing picks. Code: analysis/export_worlds.py and analysis/worlds_check.js. Result: data/worlds-result-2026.json.`
+    ].map(t=>`<li>${t}</li>`).join('');
   }
   // xPresence against recency-weighted PrioScore; scored with beta = 1 like the rolling tests above
   const PRX = { domestic: PRIOREC.xpVsRecencyPrio.domestic.xp5_b1, international: PRIOREC.xpVsRecencyPrio.international.xp5_b1 };
@@ -1287,7 +2010,7 @@ onmessage = e => {
   $('d-archive').addEventListener('toggle', () => { if ($('d-archive').open && L) renderLab(); });
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; const sm = d.querySelector('summary'); sm.focus({ preventScroll:true }); d.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block:'start' }); });
-  renderResults(); renderPrioRec(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
+  renderResults(); renderWorlds(); renderPrioRec(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
 })();
 </script>
 

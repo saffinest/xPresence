@@ -73,6 +73,23 @@
       <p class="note" id="res-note"></p>
     </div>
 
+    <details class="card fold" id="d-worlds">
+      <summary><h2>Worlds check</h2><span class="note">The frozen predictions, scored on every Worlds 2026 game as set out in the test plan</span></summary>
+      <p class="explain" id="wc-verdict"></p>
+      <h3>Every model</h3>
+      <p class="note">Gain per draft action over gol.gg's PrioScore, all games pooled. The 90% range comes from resampling whole Worlds series. The main model is highlighted.</p>
+      <div class="tscroll"><table class="bt" id="wc-models" aria-label="Worlds 2026: every model against PrioScore"></table></div>
+      <h3>By stage</h3>
+      <div class="tscroll"><table class="bt" id="wc-stages" aria-label="Worlds 2026: gain over PrioScore by stage"></table></div>
+      <h3>Are the Game 1 percentages accurate?</h3>
+      <p class="note" id="wc-cal-note"></p>
+      <div class="tscroll"><table class="bt" id="wc-cal" aria-label="Worlds 2026: patch-adjusted xPresence, predicted against actual, Game 1s"></table></div>
+      <h3>Biggest misses</h3>
+      <p class="note">Champions whose Game 1 rate at Worlds was furthest from the frozen patch-adjusted prediction, with the patch notes that went into it.</p>
+      <div class="tscroll"><table class="bt" id="wc-miss" aria-label="Worlds 2026: biggest misses with patch notes"></table></div>
+      <ul class="plain" id="wc-notes" style="font-size:13px"></ul>
+    </details>
+
     <div class="card">
       <div class="card-hd"><h2>Are the percentages accurate?</h2><span class="note">Game 1s in all 31 rolling tests, 5-day half-life</span></div>
       <div class="two">

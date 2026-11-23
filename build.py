@@ -14,7 +14,7 @@ for o in bt:
         for k in ('ll', 'gain', 'beta', 'rho'): r[k] = round(r[k], 5)
 rep = {'/*DATA*/': 'data3.json', '/*SNAP*/': 'snapshot5.json', '/*SNAPPREV*/': 'snapshot3.json', '/*INIT*/': 'init5.json',
        '/*MSI*/': 'msi3.json', '/*ROLL*/': 'rolling_dash.json', '/*PADJ*/': 'adjust_dash.json', '/*PATCH*/': 'patch_adj.json',
-       '/*CAL*/': 'calib5.json', '/*ROLES*/': 'roles_summer.json', '/*ROLEX*/': 'role_dash.json'}
+       '/*CAL*/': 'calib5.json', '/*ROLES*/': 'roles_summer.json', '/*ROLEX*/': 'role_dash.json', '/*WORLDS*/': 'worlds-result-2026.json'}
 vals = {k: rd('data', v).strip() for k, v in rep.items()}
 vals['/*BACKTEST*/'] = json.dumps(bt, ensure_ascii=False)
 vals['/*PRIOREC*/'] = json.dumps(json.loads(rd('data', 'prio_recency.json'))['summary'])   # summary only; per-test scores stay in data/

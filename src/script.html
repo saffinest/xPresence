@@ -15,6 +15,7 @@ const PADJ = /*PADJ*/;
 const CAL = /*CAL*/;
 const ROLES = /*ROLES*/;
 const ROLEX = /*ROLEX*/;
+const WORLDS = /*WORLDS*/; // Worlds 2026 check of the frozen predictions (analysis/worlds_check.js)
 const PRIOREC = /*PRIOREC*/; // PrioScore with the same recency weighting (analysis/prio_recency.js)
 (function(){
   const P = prepGames(D);
@@ -297,7 +298,10 @@ onmessage = e => {
     const rel = o => Math.exp(btRow(o,'Plackett–Luce + recency').ll - btRow(o,'gol.gg-style PrioScore').ll) - 1;
     const m = MSI.rows[0], pa = PADJ.gap.h5.flat.perTest;
     const paWon = pa.filter(v=>v>0).length, paLost = pa.filter(v=>v<0).length;
+    const wv = WORLDS.verdict;
     const rows = [
+      ['grp','Pre-registered test'],
+      { t:'Worlds 2026 (frozen predictions)', sub:`${WORLDS.games} games, scored as set out in the test plan`, n:1, won: wv.pass ? 'PASS' : 'FAIL', gain:`${f(wv.point)} <span class="muted">(90% range ${f(wv.lo)} to ${f(wv.hi)})</span>`, d:'d-worlds' },
       ['grp','Against gol.gg’s PrioScore'],
       { t:'Domestic patches, 2025–2026', sub:'six leagues, rolling', n:ROLL.domTests, won:`${h5.domBeats} of ${ROLL.domTests}`, gain:f(h5.dom), d:'d-rolling' },
       { t:'International events, 2025–2026', sub:'First Stand, MSI, Worlds', n:ROLL.intlTests, won:`${h5.intlBeats} of ${ROLL.intlTests}`, gain:f(h5.intl), d:'d-rolling' },
@@ -316,6 +320,38 @@ onmessage = e => {
       rows.map(r => Array.isArray(r) ? `<tr class="grp"><td colspan="5">${r[1]}</td></tr>` :
         `<tr><td>${r.t} <span class="muted" style="font-size:12px">· ${r.sub}</span>${r.note?` <span class="badge ${r.note==='retired'?'b-hurt':r.note==='in use'?'b-help':'b-mixed'}">${r.note}</span>`:''}</td><td class="num">${r.n}</td><td class="won">${r.won}</td><td class="num">${r.gain}</td><td><button class="linkbtn" data-open="${r.d}" aria-label="Details: ${r.t}">Details</button></td></tr>`).join('') + '</tbody>';
     $('res-note').textContent = `Headline: xPresence beat gol.gg in ${h5.domBeats + h5.intlBeats} of ${ROLL.domTests + ROLL.intlTests} rolling tests across ${ROLL.games.toLocaleString()} games at the current 5-day setting. Almost all of the gain comes from weighting recent games; without it, xPresence roughly ties gol.gg.`;
+  }
+  // Worlds 2026: the frozen predictions scored on every Worlds game (data/worlds-result-2026.json)
+  const WORLDS_EXCLUDED = 12; // LPL regional-qualifier games Oracle's Elixir files under Worlds; dropped in export_worlds.py
+  function renderWorlds(){
+    const f = v => (v>=0?'+':'')+(v*100).toFixed(1)+'%', p = v => (v*100).toFixed(1)+'%', M = WORLDS.models, V = WORLDS.verdict;
+    const fe = v => Math.abs(v) < 0.0005 && v !== 0 ? (v<0?'-':'+')+(Math.abs(v)*100).toFixed(2)+'%' : f(v); // so a range edge just below zero doesn't read "-0.0%"
+    const rng = r => `${fe(r.lo)} to ${fe(r.hi)}`;
+    const cost = (1 + M.xp5.vsGol.point) / (1 + M.xp_adj.vsGol.point) - 1;
+    const noted = WORLDS.biggestMisses.filter(m => m.patch.length), followed = noted.filter(m => m.explainedByPatchNotes).length;
+    $('wc-verdict').innerHTML = `<b>xPresence passed the pre-registered test.</b> Patch-adjusted xPresence, frozen before Worlds, found the real picks and bans ${p(V.point)} more likely than gol.gg's PrioScore (90% range ${rng(V)}), across ${WORLDS.games} games and ${WORLDS.actions.toLocaleString()} picks and bans. The unadjusted 5-day model did best (${f(M.xp5.vsGol.point)}). The patch-notes adjustment cost about ${Math.round(cost*100)}%, because ${followed ? `only ${followed} of the ${noted.length}` : 'none'} of the biggest misses followed their patch notes. ${WORLDS_EXCLUDED} LPL qualifier games that Oracle's Elixir lists under Worlds were excluded because they're in the training data.`;
+    const order = ['xp_adj','xp5','xp10','gol_rec5','presence','gol'];
+    $('wc-models').innerHTML = `<thead><tr><th>Model</th><th>vs PrioScore</th><th>90% range</th><th>vs PrioScore with recency</th><th>Rank corr.<span class="h2">with Worlds presence</span></th><th>Top 10<span class="h2">taken per Game 1</span></th></tr></thead><tbody>` +
+      order.map(k => { const m = M[k];
+        return `<tr class="${k==='xp_adj'?'hl':''}"><td>${m.name}</td><td class="num">${m.vsGol ? f(m.vsGol.point) : '–'}</td><td class="num muted">${m.vsGol ? rng(m.vsGol) : '–'}</td><td class="num">${m.vsGolRec ? f(m.vsGolRec.point) : '–'}</td><td class="num">${m.rankCorr.toFixed(3)}</td><td class="num">${m.top10.perGame1.toFixed(2)}</td></tr>`; }).join('') + '</tbody>';
+    const SK = [['xp_adj','Patch-adjusted'],['xp5','Unadjusted'],['xp10','10-day'],['gol_rec5','PrioScore with recency'],['presence','Presence']];
+    const cell = r => r ? `${f(r.point)} <span class="muted">(${rng(r)})</span>` : '–';
+    $('wc-stages').innerHTML = `<thead><tr><th>Stage</th><th>Games</th>${SK.map(([,n])=>`<th>${n}</th>`).join('')}</tr></thead><tbody>` +
+      `<tr class="hl"><td>All games</td><td class="num">${WORLDS.games}</td>${SK.map(([k])=>`<td class="num">${cell(M[k].vsGol)}</td>`).join('')}</tr>` +
+      Object.entries(WORLDS.stages).map(([st, v]) => `<tr><td>${st}</td><td class="num">${v.games}</td>${SK.map(([k])=>`<td class="num">${cell(v.models[k])}</td>`).join('')}</tr>`).join('') + '</tbody>';
+    const cal = M.xp_adj.calibration, top = cal[cal.length-1], top5 = M.xp5.calibration[M.xp5.calibration.length-1];
+    $('wc-cal-note').textContent = `Each champion still available in each of the ${WORLDS.game1s} Game 1s, grouped by its frozen patch-adjusted xPresence, against how often it was picked or banned. The test plan flagged the 90%+ group, because at past international events those champions were taken 81% of the time. At Worlds they were taken ${p(top.actual)} of the time (predicted ${p(top.predicted)}). For the unadjusted model it was ${p(top5.actual)} (predicted ${p(top5.predicted)}).`;
+    $('wc-cal').innerHTML = `<thead><tr><th>Rated</th><th>Champion-Game 1s</th><th>Predicted</th><th>Actually taken</th></tr></thead><tbody>` +
+      cal.map(b => `<tr><td>${b.range.replace('-', '–')}</td><td class="num">${b.n.toLocaleString()}</td><td class="num">${p(b.predicted)}</td><td class="num">${p(b.actual)}</td></tr>`).join('') + '</tbody>';
+    $('wc-miss').innerHTML = `<thead><tr><th>Champion</th><th>Predicted<span class="h2">Game 1, patch-adjusted</span></th><th>Taken<span class="h2">in Game 1s</span></th><th>Worlds presence</th><th>Patch notes</th></tr></thead><tbody>` +
+      WORLDS.biggestMisses.map(m => `<tr><td>${m.champ}</td><td class="num">${p(m.predicted)}</td><td class="num ${m.diff>0?'d-up':'d-dn'}">${p(m.actualG1)}</td><td class="num">${p(m.worldsPresence)}</td><td>${m.patch.length ? m.patch.join('; ') : '<span class="muted">none</span>'}</td></tr>`).join('') + '</tbody>';
+    const rec = M.xp_adj.vsGolRec;
+    $('wc-notes').innerHTML = [
+      `Scoring follows the test plan: xPresence uses its own percentages, while PrioScore, PrioScore with recency and presence get a scale fitted on the last 30 days of summer games. With that fitting step too, patch-adjusted xPresence is ${f(M.xp_adj.fittedBeta.vsGol.point)} better than PrioScore.`,
+      `Against PrioScore with recency, patch-adjusted xPresence is ${f(rec.point)} (90% range ${rng(rec)}) and unadjusted xPresence ${f(M.xp5.vsGolRec.point)}. The plan reports this as context, not as a pass or fail.`,
+      `${WORLDS.newChampions.join(' and ')} weren't drafted in the summer data, so each model gives them its weakest frozen strength.`,
+      `Data: Oracle's Elixir 2026 match data, downloaded after the final. ${WORLDS.games} games in ${WORLDS.series} series; no duplicate games, no repeat picks within a series and no missing picks. Code: analysis/export_worlds.py and analysis/worlds_check.js. Result: data/worlds-result-2026.json.`
+    ].map(t=>`<li>${t}</li>`).join('');
   }
   // xPresence against recency-weighted PrioScore; scored with beta = 1 like the rolling tests above
   const PRX = { domestic: PRIOREC.xpVsRecencyPrio.domestic.xp5_b1, international: PRIOREC.xpVsRecencyPrio.international.xp5_b1 };
@@ -534,6 +570,6 @@ onmessage = e => {
   $('d-archive').addEventListener('toggle', () => { if ($('d-archive').open && L) renderLab(); });
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('res-tbl').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (!b) return; const d = $(b.dataset.open); d.open = true; const sm = d.querySelector('summary'); sm.focus({ preventScroll:true }); d.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block:'start' }); });
-  renderResults(); renderPrioRec(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
+  renderResults(); renderWorlds(); renderPrioRec(); renderRoles(); renderCalib(); renderBacktest(); renderPatchAdj(); renderRolling(); renderMSI(); renderSnap(); syncControls(); runPL();
 })();
 </script>
